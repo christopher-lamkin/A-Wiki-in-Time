@@ -1,4 +1,20 @@
 #map {
-  height: 500px;
-  width: 500px;
+  height: 100%;
+  width: 100%;
+  margin: 0px auto;
+}
+
+#map-container {
+    height: 80%;
+    width: 80%;
+    margin: 0px auto;
+
+}
+
+body, html, .container-fluid
+ {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
 }
