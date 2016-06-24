@@ -41,7 +41,7 @@ function initMap() {
 
 
   marker = new google.maps.Marker({
-    position: myLatLng,
+    position: map.getCenter(),
     map: map,
     title: 'Drag Me!',
     draggable: true
@@ -56,7 +56,9 @@ function initMap() {
   });
 
   map.addListener('mouseover', function() {
-    mostRecentInfoWindow.close();
+    if (!!mostRecentInfoWindow) {
+      mostRecentInfoWindow.close();
+    }
   })
 }
 
