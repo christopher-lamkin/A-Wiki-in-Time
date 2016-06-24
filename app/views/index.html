@@ -43,26 +43,33 @@
 </div>
 <form id='input-data'>
   <div id='event-type'>
-  <label>Event Type: </label>
+    <label>Event Type: </label>
     <select>
       <option value="battles">Battles</option>
     </select>
   </div>
   <div>
-  <label>Within: </label>
-  <input type="radio" name="year-range" value="5" checked> 5 years
-  <input type="radio" name="year-range" value="20"> 20 years
-  <input type="radio" name="year-range" value="50"> 50 years
-  <input type="radio" name="year-range" value="100"> 100 years
+    <label>Within: </label>
+    <input type="radio" name="year-range" value="5" checked> 5 years
+    <input type="radio" name="year-range" value="20"> 20 years
+    <input type="radio" name="year-range" value="50"> 50 years
+    <input type="radio" name="year-range" value="100"> 100 years
+  </div>
+  <div>
+    <label>And: </label>
+    <input type="radio" name="radius" value="10" checked> 10km
+    <input type="radio" name="radius" value="50"> 50km
+    <input type="radio" name="radius" value="100"> 100km
+    <input type="radio" name="radius" value="300"> 300km
   </div>
   <div>
     <label>Of: </label>
+    <div id='textInput'>
+      Slide to Select Year
+    </div>
     <input type="range" name="date" id='date-slider' value='1000' min='0' max='2000' onchange="updateTextInput(this.value);">
   </div>
-<div id='textInput'>
-Slide to Select Year
-</div>
-<input type="submit" name="Submit" value="Submit!">
+  <input type="submit" name="Submit" value="Submit!">
 </form>
 </body>
 </html>

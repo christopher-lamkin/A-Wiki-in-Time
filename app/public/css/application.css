@@ -22,3 +22,20 @@ body, html, .container-fluid
 #header {
   height: 5%;
 }
+
+#date-slider {
+
+  width: 60%;
+  display: inline-block;
+  margin: 0 auto;
+}
+#input-data {
+
+  width: 60%;
+  margin: 0 auto;
+  text-align: center;
+}
+#textInput {
+
+  color: red;
+}
