@@ -57,8 +57,12 @@
   </div>
   <div>
     <label>Of: </label>
-    <input type="range" name="date" id='date-slider' value='1000' min='0' max='2000'>
+    <input type="range" name="date" id='date-slider' value='1000' min='0' max='2000' onchange="updateTextInput(this.value);">
   </div>
+<div id='textInput'>
+Slide to Select Year
+</div>
+<input type="submit" name="Submit" value="Submit!">
 </form>
 </body>
 </html>

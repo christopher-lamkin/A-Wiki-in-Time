@@ -2,6 +2,10 @@ var map;
 var styleArray = [];
 var myLatLng = {lat: 37.784580, lng: -122.397437};
 
+var updateTextInput = function (val) {
+  $('#textInput').empty();
+  $('#textInput').append(val);
+}
 function initMap() {
   var markerSpot;
   map = new google.maps.Map(document.getElementById('map'), {
