@@ -5,8 +5,8 @@
 }
 
 #map-container {
-    height: 80%;
-    width: 80%;
+    height: 70%;
+    width: 99%;
     margin: 0px auto;
 
 }
@@ -21,6 +21,7 @@ body, html, .container-fluid
 
 #header {
   height: 5%;
+  text-align: center
 }
 
 #date-slider {
@@ -34,6 +35,8 @@ body, html, .container-fluid
   width: 60%;
   margin: 0 auto;
   text-align: center;
+  margin-top: 2%;
+  margin-bottom: 2%;
 }
 #textInput {
 
