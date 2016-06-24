@@ -14,8 +14,10 @@
     application.css is where you put your styles
   -->
   <link rel="stylesheet" href="../public/css/application.css">
+  <!-- <link href="https://css/ui-lightness/jquery-ui-1.9.2.custom.css" rel="stylesheet"> -->
+  <!-- <script src="jquery-1.12.2.min.js"></script> -->
 
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
 
   <script src="/public/js/application.js"></script>
 
@@ -33,11 +35,30 @@
     </div>
   </div>
 
-  <div id='date-slider-div' data-role='main' class = 'ui-content'>
+  <div id='slider-range'>
 <!--   <form id='slider-form' method='post' action='/slider'>
   <label for='date'>Date:</label>
   <input type='range' name='date' id='date-slider' value='1800' min='1600' max = '2000'>
-  </form> -->
+</form> -->
+</div>
+<form id='input-data'>
+  <div id='event-type'>
+  <label>Event Type: </label>
+    <select>
+      <option value="battles">Battles</option>
+    </select>
   </div>
+  <div>
+  <label>Within: </label>
+  <input type="radio" name="gender" value="5" checked> 5 years
+  <input type="radio" name="gender" value="20"> 20 years
+  <input type="radio" name="gender" value="50"> 50 years
+  <input type="radio" name="gender" value="100"> 100years
+  </div>
+  <div>
+    <label>Of: </label>
+    <input type="range" name="date" id='date-slider' value='1000' min='0' max='2000'>
+  </div>
+</form>
 </body>
 </html>

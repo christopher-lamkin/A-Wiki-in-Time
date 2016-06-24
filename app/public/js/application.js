@@ -44,6 +44,7 @@ function initMap() {
     var long = event.latLng.lng();
     var latlng = {lat: lat, lng: long};
     console.log(latlng)
+
   });
 }
 
@@ -54,4 +55,16 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
     'Error: Your browser doesn\'t support geolocation.');
 }
 
-
+// $("#slider-range").slider({
+//   orientation: "horizontal",
+//   range: false,
+//   min: 0,
+//   max: 1,
+//   value: 0,
+//   step: .01,
+//   animate: true,
+//   slide: function (event, ui) {
+//     // $("#a_field").val(ui.value);
+//     // $("#a").text(ui.value);
+//   }
+// });
