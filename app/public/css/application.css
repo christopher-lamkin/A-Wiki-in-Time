@@ -1,3 +1,8 @@
+@font-face {
+  font-family: endor;
+  src: url("../fonts/endor/ENDOR.ttf");
+}
+
 #map {
   height: 100%;
   width: 100%;
@@ -21,7 +26,8 @@ body, html, .container-fluid
 
 #header {
   height: 5%;
-  text-align: center
+  text-align: center;
+  font-family: endor;
 }
 
 #date-slider {
