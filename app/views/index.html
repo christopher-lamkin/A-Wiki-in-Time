@@ -68,7 +68,9 @@
     <div id='textInput'>
       Slide to Select Year
     </div>
-    <input type="range" name="date" id='date-slider' value='1000' min='-2000' max='2000' onchange="updateTextInput(this.value);">
+    <div>
+    2000 BC <input type="range" name="date" id='date-slider' value='1000' min='-2000' max='2000' onchange="updateTextInput(this.value);"> 2000 AD
+    </div>
   </div>
   <input id='lat-input' type='hidden' name='lat' value=''></input>
   <input id='long-input' type='hidden' name='long' value=''></input>

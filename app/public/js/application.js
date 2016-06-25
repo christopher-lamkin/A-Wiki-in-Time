@@ -2,6 +2,7 @@ var map;
 var styleArray = [];
 var myLatLng = {lat: 37.784580, lng: -122.397437};
 var mostRecentInfoWindow;
+var markers = [];
 var styleArray = [
 {
   "featureType": "administrative",
@@ -203,6 +204,21 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
     'Error: Your browser doesn\'t support geoloction.');
 }
 
+function addMarkerWithTimeout(position, timeout) {
+  window.setTimeout(function() {
+    markers.push(new google.maps.Marker({
+      position: position,
+      map: map,
+      animation: google.maps.Animation.DROP
+    }));
+  }, timeout);
+}
+function clearMarkers() {
+  for (var i = 0; i < markers.length; i++) {
+    markers[i].setMap(null);
+  }
+  markers = [];
+}
 $(document).ready(function() {
 
 
@@ -218,7 +234,17 @@ $(document).ready(function() {
 
     }).done(function(response) {
       console.log(response);
+      var qids = response[0].qids
+      clearMarkers();
+      for (i = 1; i < response.length; i++) {
 
+        var battle = response[i][qids[i-1]];
+        var coordinates = {lat: battle.latitude, lng: battle.longitude};
+
+        addMarkerWithTimeout(coordinates, i*400);
+
+
+      }
     })
   })
 
