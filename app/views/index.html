@@ -42,7 +42,7 @@
   <input type='range' name='date' id='date-slider' value='1800' min='1600' max = '2000'>
 </form> -->
 </div>
-<form id='input-data'>
+<form id='input-data' action='localhost:3000/query' method='post'>
   <div id='event-type'>
     <label>Event Type: </label>
     <select>
@@ -51,10 +51,10 @@
   </div>
   <div>
     <label>Within: </label>
-    <input type="radio" name="year-range" value="5" checked> 5 years
-    <input type="radio" name="year-range" value="20"> 20 years
-    <input type="radio" name="year-range" value="50"> 50 years
-    <input type="radio" name="year-range" value="100"> 100 years
+    <input type="radio" name="year_range" value="5" checked> 5 years
+    <input type="radio" name="year_range" value="20"> 20 years
+    <input type="radio" name="year_range" value="50"> 50 years
+    <input type="radio" name="year_range" value="100"> 100 years
   </div>
   <div>
     <label>And: </label>
@@ -70,7 +70,10 @@
     </div>
     <input type="range" name="date" id='date-slider' value='1000' min='-2000' max='2000' onchange="updateTextInput(this.value);">
   </div>
-  <input type="submit" name="Submit" value="Submit!">
+  <input id='lat-input' type='hidden' name='lat' value=''></input>
+  <input id='long-input' type='hidden' name='long' value=''></input>
+
+  <input id='submit-button' type="submit" name="Submit" value="Submit!">
 </form>
 </body>
 </html>

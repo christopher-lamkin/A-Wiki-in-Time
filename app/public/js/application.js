@@ -171,6 +171,8 @@ function initMap() {
     var long = event.latLng.lng();
     var latlng = {lat: lat, lng: long};
     updateWindow(map, marker, latlng);
+    $('#lat-input').val(lat);
+    $('#long-input').val(long);
     console.log(latlng);
 
   });
@@ -200,4 +202,26 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
     'Error: The Geolocation service failed.' :
     'Error: Your browser doesn\'t support geoloction.');
 }
+
+$(document).ready(function() {
+
+
+  $('#submit-button').on('click', function(event) {
+
+    event.preventDefault();
+    var data = $('#input-data').serialize();
+    console.log(data);
+    $.ajax({
+      type: 'POST',
+      url: 'http://localhost:3000/query',
+      data: data
+
+    }).done(function(response) {
+      console.log(response);
+
+    })
+  })
+
+
+})
 
