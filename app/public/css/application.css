@@ -10,24 +10,26 @@
 }
 
 #map-container {
-    height: 70%;
-    width: 99%;
-    margin: 0px auto;
+  height: 70%;
+  width: 99%;
+  margin: 0px auto;
 
 }
 
 body, html, .container-fluid
- {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    width: 100%;
+{
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
 }
 
 #header {
   height: 5%;
   text-align: center;
   font-family: endor;
+  margin-bottom: 2%;
+  margin-top: 2%;
 }
 
 #date-slider {
@@ -41,6 +43,7 @@ body, html, .container-fluid
   width: 60%;
   margin: 0 auto;
   text-align: center;
+
   margin-top: 2%;
   margin-bottom: 2%;
 }
