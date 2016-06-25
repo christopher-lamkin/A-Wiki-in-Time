@@ -29,7 +29,26 @@ body, html, .container-fluid
   text-align: center;
   font-family: endor;
   margin-bottom: 2%;
-  margin-top: 2%;
+  margin-top: 3%;
+  /*transition: 0.3s ease;*/
+
+}
+
+.header-div {
+  display: inline-block;
+  transition: 0.3s ease;
+  font-size: 2em;
+
+}
+
+#header:hover {
+  /*transform: scale(1.5, 1.5);*/
+
+}
+.header-div:hover {
+  transform: scale(1.5, 1.5);
+  color: goldenrod;
+
 }
 
 #date-slider {

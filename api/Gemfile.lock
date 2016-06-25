@@ -41,6 +41,7 @@ GEM
     arel (7.0.0)
     builder (3.2.2)
     byebug (9.0.5)
+    coderay (1.1.1)
     concurrent-ruby (1.0.2)
     diff-lcs (1.2.5)
     erubis (2.7.0)
@@ -76,6 +77,15 @@ GEM
       mini_portile2 (~> 2.1.0)
       pkg-config (~> 1.1.7)
     pkg-config (1.1.7)
+    pry (0.10.3)
+      coderay (~> 1.1.0)
+      method_source (~> 0.8.1)
+      slop (~> 3.4)
+    pry-byebug (3.4.0)
+      byebug (~> 9.0)
+      pry (~> 0.10)
+    pry-rails (0.3.4)
+      pry (>= 0.9.10)
     puma (3.4.0)
     rack (2.0.0.rc1)
       json
@@ -128,6 +138,7 @@ GEM
       rspec-mocks (~> 3.1.0)
       rspec-support (~> 3.1.0)
     rspec-support (3.1.2)
+    slop (3.6.0)
     spring (1.7.1)
     spring-watcher-listen (2.0.0)
       listen (>= 2.7, < 4.0)
@@ -152,10 +163,11 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  byebug
   factory_girl_rails
   httparty
   listen (~> 3.0.5)
+  pry-byebug
+  pry-rails
   puma (~> 3.0)
   rack-cors
   rails (>= 5.0.0.rc2, < 5.1)
