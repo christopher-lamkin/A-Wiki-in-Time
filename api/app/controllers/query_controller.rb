@@ -1,6 +1,6 @@
 class QueryController < ApplicationController
   CATEGORIES_HASH = {
-    'Battles' => 178561
+    'battles' => 178561
   }
 
   def create
