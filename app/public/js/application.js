@@ -1,6 +1,6 @@
 var map;
 var styleArray = [];
-var myLatLng = {lat: 37.784580, lng: -122.397437};
+var myLatLng = {lat: 32.866756, lng: -83.469486};
 var mostRecentInfoWindow;
 var markers = [];
 var styleArray = [
@@ -131,7 +131,7 @@ function initMap() {
   var markerSpot;
   map = new google.maps.Map(document.getElementById('map'), {
     center: myLatLng,
-    zoom: 10,
+    zoom: 4,
     styles: styleArray
   });
 
@@ -162,11 +162,15 @@ function initMap() {
 
 
   marker = new google.maps.Marker({
-    position: map.getCenter(),
+    // position: map.getCenter(),
+    position: myLatLng,
     map: map,
     title: 'Drag Me!',
     draggable: true
   });
+  $('#lat-input').val(myLatLng.lat);
+  $('#long-input').val(myLatLng.lng);
+
   google.maps.event.addListener(marker, 'dragend', function (event) {
     var lat = event.latLng.lat();
     var long = event.latLng.lng();
@@ -187,7 +191,7 @@ function initMap() {
 
 var updateWindow = function (map, marker, latlng) {
   mostRecentInfoWindow.close();
-  infoWindow = new google.maps.InfoWindow({
+  var infoWindow = new google.maps.InfoWindow({
     content: "Latitude: " + latlng.lat + "<br>Longitude: " + latlng.lng
   })
   mostRecentInfoWindow = infoWindow;
@@ -204,15 +208,28 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
     'Error: Your browser doesn\'t support geoloction.');
 }
 
-function addMarkerWithTimeout(position, timeout) {
+function addMarkerWithTimeout(position, timeout, battle) {
   window.setTimeout(function() {
-    markers.push(new google.maps.Marker({
+    var marker = new google.maps.Marker({
       position: position,
       map: map,
       animation: google.maps.Animation.DROP
-    }));
+    })
+    markers.push(marker);
+
+    var infoWindow = new google.maps.InfoWindow({
+      content: "<strong>Title:</strong> " + battle.title + "<br><strong>Description: </strong>" + battle.description + "<br><strong>Date:</strong> " + battle.end_time + "<br><strong>Wiki URL:</strong> <a href=" + battle.link + " target='_blank'> " + battle.link + "</a>"
+    })
+    mostRecentInfoWindow = infoWindow;
+    marker.addListener('click', function() {
+      mostRecentInfoWindow.close();
+      infoWindow.open(map, marker);
+      mostRecentInfoWindow = infoWindow;
+    })
+
   }, timeout);
 }
+
 function clearMarkers() {
   for (var i = 0; i < markers.length; i++) {
     markers[i].setMap(null);
@@ -234,16 +251,16 @@ $(document).ready(function() {
 
     }).done(function(response) {
       console.log(response);
-      var qids = response[0].qids
-      clearMarkers();
-      for (i = 1; i < response.length; i++) {
-
-        var battle = response[i][qids[i-1]];
-        var coordinates = {lat: battle.latitude, lng: battle.longitude};
-
-        addMarkerWithTimeout(coordinates, i*400);
-
-
+      if (!!response.error) {
+        console.log(response);
+      } else {
+        var qids = response[0].qids
+        clearMarkers();
+        for (i = 1; i < response.length; i++) {
+          var battle = response[i][qids[i-1]];
+          var coordinates = {lat: battle.latitude, lng: battle.longitude};
+          addMarkerWithTimeout(coordinates, i*400, battle);
+        }
       }
     })
   })
