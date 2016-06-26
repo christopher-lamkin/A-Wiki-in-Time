@@ -250,8 +250,6 @@ $(document).ready(function() {
       data: data
 
     }).done(function(response) {
-      console.log(response);
-      // debugger;
       if (!!response.error) {
         console.log(response);
       } else {
@@ -268,4 +266,3 @@ $(document).ready(function() {
 
 
 })
-
