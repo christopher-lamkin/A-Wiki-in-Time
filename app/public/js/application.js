@@ -131,7 +131,7 @@ function initMap() {
   var markerSpot;
   map = new google.maps.Map(document.getElementById('map'), {
     center: myLatLng,
-    zoom: 10,
+    zoom: 4,
     styles: styleArray
   });
 
@@ -168,6 +168,9 @@ function initMap() {
     title: 'Drag Me!',
     draggable: true
   });
+  $('#lat-input').val(myLatLng.lat);
+  $('#long-input').val(myLatLng.lng);
+
   google.maps.event.addListener(marker, 'dragend', function (event) {
     var lat = event.latLng.lat();
     var long = event.latLng.lng();
@@ -215,7 +218,7 @@ function addMarkerWithTimeout(position, timeout, battle) {
     markers.push(marker);
 
     var infoWindow = new google.maps.InfoWindow({
-      content: "<strong>Title:</strong> " + battle.title + "<br><strong>Date:</strong> " + battle.end_time + "<br><strong>Wiki URL:</strong> <a href=" + battle.link + " target='_blank'> " + battle.link + "</a>"
+      content: "<strong>Title:</strong> " + battle.title + "<br><strong>Description: </strong>" + battle.description + "<br><strong>Date:</strong> " + battle.end_time + "<br><strong>Wiki URL:</strong> <a href=" + battle.link + " target='_blank'> " + battle.link + "</a>"
     })
     mostRecentInfoWindow = infoWindow;
     marker.addListener('click', function() {
