@@ -131,7 +131,7 @@ function initMap() {
   var markerSpot;
   map = new google.maps.Map(document.getElementById('map'), {
     center: myLatLng,
-    zoom: 10,
+    zoom: 4,
     styles: styleArray
   });
 
