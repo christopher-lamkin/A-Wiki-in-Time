@@ -10,12 +10,46 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160626165629) do
+ActiveRecord::Schema.define(version: 20160626183833) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "events", force: :cascade do |t|
+    t.string   "qID"
+    t.string   "title"
+    t.text     "description"
+    t.datetime "date"
+    t.float    "latitude"
+    t.float    "longitude"
+    t.string   "event_url"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  create_table "queries", force: :cascade do |t|
+    t.integer  "user_id"
+    t.string   "query_url"
+    t.float    "latitude"
+    t.float    "longitude"
+    t.integer  "radius"
+    t.datetime "start_date"
+    t.datetime "end_date"
+    t.string   "event_type"
+    t.text     "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "queries_events", force: :cascade do |t|
+    t.integer  "query_id"
+    t.integer  "event_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "users", force: :cascade do |t|
+    t.string   "username"
     t.string   "email",                  default: "", null: false
     t.string   "encrypted_password",     default: "", null: false
     t.string   "reset_password_token"

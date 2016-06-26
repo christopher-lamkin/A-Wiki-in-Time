@@ -41,6 +41,11 @@ body, html, .container-fluid
 
 }
 
+.header-div a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
 #header:hover {
   /*transform: scale(1.5, 1.5);*/
 
