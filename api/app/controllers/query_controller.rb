@@ -1,4 +1,8 @@
 class QueryController < ApplicationController
+  CATEGORIES_HASH = {
+    'Battles' => 178561
+  }
+
   def create
     # p params.inspect
     start_year = params[:date].to_i - params[:year_range].to_i
@@ -6,7 +10,9 @@ class QueryController < ApplicationController
     radius = params[:radius].to_i
     lat = params[:lat]
     long = params[:long]
-    url = "https://wdq.wmflabs.org/api?q=CLAIM[31:178561]%20and%20between[582,#{start_year},#{end_year}]%20and%20around[625,#{lat},#{long},#{radius}]"
+    type = params[:type]
+
+    url = "https://wdq.wmflabs.org/api?q=CLAIM[31:#{CATEGORIES_HASH[type]}]%20and%20between[582,#{start_year},#{end_year}]%20and%20around[625,#{lat},#{long},#{radius}]"
     response = HTTParty.get(url)
     qIDS = response['items'].map{|id| 'Q'+id.to_s}
     qIDString = qIDS.join("%7C")
@@ -29,7 +35,7 @@ class QueryController < ApplicationController
                 parsed_response.unshift({'qids' => qIDS})
                 render json: parsed_response
 
-                Query.create(user_id: current_user, query_url: url, latitude: lat, longitude: long, start_date: start_year, end_date: end_year, radius: radius,    )
+                @query = Query.create(user_id: current_user, query_url: url, latitude: lat, longitude: long, start_date: start_year, end_date: end_year, radius: radius, event_type: type, notes: '')
 
                 parsed_response = media_response['entities'].map do |entity, value|
             # binding.pry
@@ -44,9 +50,11 @@ class QueryController < ApplicationController
             end
             parsed_response.each do |entity|
                 entity.each do |qID, value|
-                    Event.create(qID: qID, title: value['title'], description: value['description'], date: value['end_time'],latitude: value['latitude'], longitude: value['longitude'], event_url: value['link'] )
+                    @event = Event.create(qID: qID, title: value['title'], description: value['description'], date: value['end_time'],latitude: value['latitude'], longitude: value['longitude'], event_url: value['link'] )
+                    QueriesEvent.create(query_id: @query.id, event_id: @event.id )
                 end
             end
+
             parsed_response.unshift({'qids' => qIDS})
             render json: parsed_response
 
