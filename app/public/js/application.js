@@ -234,16 +234,18 @@ $(document).ready(function() {
 
     }).done(function(response) {
       console.log(response);
-      var qids = response[0].qids
-      clearMarkers();
-      for (i = 1; i < response.length; i++) {
+      if (!!response.error) {
+        console.log(response);
+      } else {
+        var qids = response[0].qids
+        clearMarkers();
+        for (i = 1; i < response.length; i++) {
 
-        var battle = response[i][qids[i-1]];
-        var coordinates = {lat: battle.latitude, lng: battle.longitude};
+          var battle = response[i][qids[i-1]];
+          var coordinates = {lat: battle.latitude, lng: battle.longitude};
 
-        addMarkerWithTimeout(coordinates, i*400);
-
-
+          addMarkerWithTimeout(coordinates, i*400);
+        }
       }
     })
   })
