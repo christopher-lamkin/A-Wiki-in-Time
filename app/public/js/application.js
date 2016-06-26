@@ -237,13 +237,9 @@ $(document).ready(function() {
       var qids = response[0].qids
       clearMarkers();
       for (i = 1; i < response.length; i++) {
-
         var battle = response[i][qids[i-1]];
         var coordinates = {lat: battle.latitude, lng: battle.longitude};
-
         addMarkerWithTimeout(coordinates, i*400);
-
-
       }
     })
   })
