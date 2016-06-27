@@ -40,17 +40,16 @@ var Slider = React.createClass({
       <div id="slider-details" >
         <ReactNativeBootstrapSlider
         value={this.state.currentValue}
-        //range={this.state.range}
         handleChange={this.handleUpdateValue}
         step={this.state.step}
         max={this.state.max}
-        min={this.state.min}
-        reverse={true}/>
+        min={this.state.min} />
       <b style={{float: 'left'}}>year {this.state.min}</b>
       <b style={{float: 'right'}}>{this.state.max}</b>
         <br /> <br />
        Year: {newValue}
        <br /><br />
+       <input type="hidden" value={newValue} name="year"/>
       </div>
     )
   }
