@@ -261,7 +261,7 @@ function clearMarkers() {
 $(document).ready(function() {
 
 
-  $('.header-div').hover(function() {
+  $('#wiki-header').hover(function() {
     $(this).addClass('magictime perspectiveUpRetourn')
     // setTimeout(function(){
     //   $(this).removeClass('magictime perspectiveUpRetourn');
