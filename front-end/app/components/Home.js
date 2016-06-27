@@ -1,12 +1,11 @@
 var React = require('react');
+var SubmitForm = require('../components/SubmitForm');
+var RadioGroup = require('../components/RadioGroup');
 
 var Home = React.createClass({
   render() {
     return (
-      <div>
-        <h1>Hello Home</h1>
-
-      </div>
+        <SubmitForm />
     )
   }
 });
