@@ -165,7 +165,6 @@ function initMap() {
     // position: map.getCenter(),
     position: myLatLng,
     map: map,
-    title: 'Drag Me!',
     draggable: true
   });
   $('#lat-input').val(myLatLng.lat);
