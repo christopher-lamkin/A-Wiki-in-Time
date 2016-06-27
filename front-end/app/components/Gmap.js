@@ -154,17 +154,21 @@ var Gmap = React.createClass({
   )},
 
   componentDidMount: function() {
-    // create the map, marker and infoWindow after the component has
-    // been rendered because we need to manipulate the DOM for Google =(
     this.map = this.createMap()
     this.marker = this.createDraggableMarker();
-    this.infoWindow = this.createInfoWindow()
+    // this.infoWindow = this.createInfoWindow();
+    var that = this;
 
-    // have to define google maps event listeners here too
-    // because we can't add listeners on the map until its created
     google.maps.event.addListener(this.map, 'zoom_changed', function(){
       this.handleZoomChange()
-    })
+    });
+
+    google.maps.event.addListener(this.marker, 'dragend', function (event) {
+      var lat = event.latLng.lat();
+      var long = event.latLng.lng();
+      var latlng = {lat: lat, lng: long};
+      this.infoWindow = that.createInfoWindow(latlng);
+    });
   },
 
   // clean up event listeners when component unmounts
@@ -201,8 +205,8 @@ var Gmap = React.createClass({
       draggable: true
     })
   },
-  createInfoWindow: function() {
-    var contentString = "<div class='InfoWindow'>I'm a Window that contains Info Yay</div>"
+  createInfoWindow: function(latlng) {
+    var contentString = "Latitude: " + latlng.lat + "<br>Longitude: " + latlng.lng
     return new google.maps.InfoWindow({
       map: this.map,
       anchor: this.marker,
