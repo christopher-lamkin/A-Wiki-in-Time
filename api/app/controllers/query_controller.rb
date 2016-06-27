@@ -7,7 +7,17 @@ class QueryController < ApplicationController
 def create
     # p params.inspect
     start_year = params[:date].to_i - params[:year_range].to_i
+    if start_year >= 0
+      start_year = '+' + params[:date] + '-00-00T00:00:00z'
+    else
+      start_year = '-' + params[:date] + '-00-00T00:00:00z'
+    end
     end_year = params[:date].to_i + params[:year_range].to_i
+    if end_year >= 0
+      end_year = '+' + params[:date] + '-00-00T00:00:00z'
+    else
+      end_year = '-' + params[:date] + '-00-00T00:00:00z'
+    end
     radius = params[:radius].to_i
     lat = params[:lat]
     long = params[:long]
