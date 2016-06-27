@@ -3,13 +3,18 @@ var SubmitForm = require('../components/SubmitForm');
 
 
 var SearchContainer = React.createClass({
+  handleSubmit: function(e) {
+    e.preventDefault();
+    console.log(e);
+  },
+
   contextTypes: {
     router: React.PropTypes.object.isRequired
   },
 
   render(){
     return (
-      <SubmitForm />
+      <SubmitForm onSubmit={this.handleSubmit}/>
     )
   }
 
