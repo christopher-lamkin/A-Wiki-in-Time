@@ -20,11 +20,12 @@ ActiveRecord::Schema.define(version: 20160626183833) do
     t.string   "title"
     t.text     "description"
     t.datetime "date"
+    t.integer  "scraped_date"
     t.float    "latitude"
     t.float    "longitude"
     t.string   "event_url"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
   end
 
   create_table "queries", force: :cascade do |t|
@@ -33,8 +34,8 @@ ActiveRecord::Schema.define(version: 20160626183833) do
     t.float    "latitude"
     t.float    "longitude"
     t.integer  "radius"
-    t.datetime "start_date"
-    t.datetime "end_date"
+    t.integer  "start_date"
+    t.integer  "end_date"
     t.string   "event_type"
     t.text     "notes"
     t.datetime "created_at", null: false
