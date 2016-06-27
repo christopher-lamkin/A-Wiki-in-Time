@@ -268,6 +268,10 @@ $(document).ready(function() {
     // }, 3000)
   });
 
+  $('#map-container').hover(function() {
+    $('#wiki-header').removeClass('magictime perspectiveUpRetourn')
+  })
+
   $('#submit-button').on('click', function(event) {
 
     event.preventDefault();
