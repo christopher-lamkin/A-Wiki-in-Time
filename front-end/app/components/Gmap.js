@@ -118,13 +118,15 @@ var styleArray = [
 }
 ]
 
+
 // var state = { zoom: 4, styles: styleArray};
 
 var Gmap = React.createClass({
   getInitialState: function(){
   return {
     zoom: 4,
-    styles: styleArray
+    styles: styleArray,
+    mostRecentInfoWindow: { close: function(){} }
     };
   // static propTypes(){
   //   initialCenter: React.PropTypes.objectOf(React.PropTypes.number).isRequired
@@ -206,12 +208,15 @@ var Gmap = React.createClass({
     })
   },
   createInfoWindow: function(latlng) {
+    this.state.mostRecentInfoWindow.close()
     var contentString = "Latitude: " + latlng.lat + "<br>Longitude: " + latlng.lng
-    return new google.maps.InfoWindow({
+    var infoWindow = new google.maps.InfoWindow({
       map: this.map,
       anchor: this.marker,
       content: contentString
     })
+    this.setState({ mostRecentInfoWindow: infoWindow });
+    return infoWindow;
   },
 
   handleZoomChange: function() {
