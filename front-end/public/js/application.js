@@ -165,7 +165,6 @@ function initMap() {
     // position: map.getCenter(),
     position: myLatLng,
     map: map,
-    title: 'Drag Me!',
     draggable: true
   });
   $('#lat-input').val(myLatLng.lat);
@@ -230,14 +229,48 @@ function addMarkerWithTimeout(position, timeout, battle) {
   }, timeout);
 }
 
+function addArchaeologyMarkerWithTimeout(position, timeout, site) {
+  window.setTimeout(function() {
+    var marker = new google.maps.Marker({
+      position: position,
+      map: map,
+      animation: google.maps.Animation.DROP
+    })
+    markers.push(marker);
+
+    var infoWindow = new google.maps.InfoWindow({
+      content: "<strong>Title:</strong> " + site.title + "<br><strong>Wiki URL:</strong> <a href=" + site.link + " target='_blank'> " + site.link + "</a>"
+    })
+    mostRecentInfoWindow = infoWindow;
+    marker.addListener('click', function() {
+      mostRecentInfoWindow.close();
+      infoWindow.open(map, marker);
+      mostRecentInfoWindow = infoWindow;
+    })
+
+  }, timeout);
+}
+
 function clearMarkers() {
   for (var i = 0; i < markers.length; i++) {
     markers[i].setMap(null);
   }
   markers = [];
 }
+
 $(document).ready(function() {
 
+
+  $('#wiki-header').hover(function() {
+    $(this).addClass('magictime perspectiveUpRetourn')
+    // setTimeout(function(){
+    //   $(this).removeClass('magictime perspectiveUpRetourn');
+    // }, 3000)
+  });
+
+  $('#map-container').hover(function() {
+    $('#wiki-header').removeClass('magictime perspectiveUpRetourn')
+  })
 
   $('#submit-button').on('click', function(event) {
 
@@ -254,15 +287,23 @@ $(document).ready(function() {
         console.log(response);
       } else {
         var qids = response[0].qids
+        var type = response[0].type
         clearMarkers();
         for (i = 1; i < response.length; i++) {
-          var battle = response[i][qids[i-1]];
-          var coordinates = {lat: battle.latitude, lng: battle.longitude};
-          addMarkerWithTimeout(coordinates, i*400, battle);
+          var event = response[i][qids[i-1]];
+          var coordinates = {lat: event.latitude, lng: event.longitude};
+
+          if (type == 'battles') {
+            addMarkerWithTimeout(coordinates, i*400, event);
+          } else {
+            addArchaeologyMarkerWithTimeout(coordinates, i*400, event);
+          }
         }
       }
     })
   })
-
-
 })
+
+
+
+
