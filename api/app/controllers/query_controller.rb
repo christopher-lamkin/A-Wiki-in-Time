@@ -21,7 +21,7 @@ class QueryController < ApplicationController
       long = params[:long]
       type = params[:type]
 
-    if type == 'battles'
+      if type == 'battles'
         url = "https://wdq.wmflabs.org/api?q=CLAIM[31:#{CATEGORIES_HASH[type]}]%20and%20between[582,#{start_year},#{end_year}]%20and%20around[625,#{lat},#{long},#{radius}]"
     else
         url = "https://wdq.wmflabs.org/api?q=CLAIM[31:#{CATEGORIES_HASH[type]}]%20and%20around[625,#{lat},#{long},#{radius}]"
@@ -42,7 +42,7 @@ class QueryController < ApplicationController
         else
             parsed_response = parse_archaeological_response(entities)
         end
-        parsed_response.unshift({'qids' => qIDS})
+        parsed_response.unshift({'qids' => qIDS, 'type' => type})
             # parsed_response['qids'] => qIDS
             @query = Query.create(user_id: 1, query_url: url, latitude: lat, longitude: long, start_date: start_year, end_date: end_year, radius: radius, event_type: type, notes: '')
             end_point = parsed_response.length - 1

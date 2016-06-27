@@ -98,6 +98,3 @@ DEPENDENCIES
   pry-byebug
   rake
   rspec
-
-BUNDLED WITH
-   1.12.5
