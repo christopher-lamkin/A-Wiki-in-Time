@@ -4,11 +4,11 @@ var RadioGroup = require('../components/RadioGroup');
 
 var RadioBtnContainer = React.createClass({
   getInitialState(){
-   return {selectedValue: 5};
+   return {selectedValue: "5"};
  },
 
-  handleChange(value) {
-     this.setState({selectedValue: value});
+  onChange(event) {
+     this.setState({selectedValue: event.target.value});
    },
 
   componentDidMount: function(){
