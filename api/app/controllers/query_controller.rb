@@ -15,14 +15,17 @@ def create
 
     url = "https://wdq.wmflabs.org/api?q=CLAIM[31:#{CATEGORIES_HASH[type]}]%20and%20between[582,#{start_year},#{end_year}]%20and%20around[625,#{lat},#{long},#{radius}]"
     response = HTTParty.get(url)
-    qIDS = create_qIDS(response['items'])
-    qIDString = qIDS.join("%7C")
+    if response['items']
+        qIDS = create_qIDS(response['items'])
+        qIDString = qIDS.join("%7C")
+    end
 
-    mediaUrl = "https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=#{qIDString}&props=labels%7Cdescriptions%7Cclaims%7Csitelinks%2Furls&languages=en&languag
-    efallback=1&sitefilter=&formatversion=2"
+    if qIDString
+        mediaUrl = "https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=#{qIDString}&props=labels%7Cdescriptions%7Cclaims%7Csitelinks%2Furls&languages=en&languag
+        efallback=1&sitefilter=&formatversion=2"
 
-    media_response = HTTParty.get(mediaUrl)
-
+        media_response = HTTParty.get(mediaUrl)
+    end
     if media_response['entities']
         entities = media_response['entities']
         parsed_response = parse_response(entities)
