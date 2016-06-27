@@ -13,6 +13,13 @@
   opacity: 0;
 }
 
+#app {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
 #GMap-canvas {
   height: 100%;
   width: 100%;
@@ -26,7 +33,7 @@
 
 }
 
-body, html, .container-fluid
+body, html, .main-container
 {
   margin: 0;
   padding: 0;

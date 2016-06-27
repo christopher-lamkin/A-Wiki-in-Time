@@ -131,12 +131,23 @@ var Gmap = React.createClass({
   // },
   },
   render: function() {
+    var gMapStyles = {
+      height: '70%',
+      width: '99%',
+      margin: '0px auto'
+    }
+
+    var gMapCanvasStyles = {
+      height: '100%',
+      width: '100%',
+      margin: '0px auto'
+    }
     return (
-      <div className="GMap">
+      <div className="GMap" style={gMapStyles}>
         <div className='UpdatedText'>
           <p>Current Zoom: { this.state.zoom }</p>
         </div>
-        <div className='GMap-canvas' ref="mapCanvas">
+        <div className='GMap-canvas' ref="mapCanvas" style={gMapCanvasStyles}>
           Loading map ...
         </div>
       </div>
@@ -146,7 +157,7 @@ var Gmap = React.createClass({
     // create the map, marker and infoWindow after the component has
     // been rendered because we need to manipulate the DOM for Google =(
     this.map = this.createMap()
-    this.marker = this.createMarker()
+    this.marker = this.createDraggableMarker();
     this.infoWindow = this.createInfoWindow()
 
     // have to define google maps event listeners here too
@@ -183,6 +194,13 @@ var Gmap = React.createClass({
     })
   },
 
+  createDraggableMarker: function() {
+    return new google.maps.Marker({
+      position: this.mapCenter(),
+      map: this.map,
+      draggable: true
+    })
+  },
   createInfoWindow: function() {
     var contentString = "<div class='InfoWindow'>I'm a Window that contains Info Yay</div>"
     return new google.maps.InfoWindow({
