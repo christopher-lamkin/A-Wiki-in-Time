@@ -12,3 +12,83 @@
 .appear-leave {
   opacity: 0;
 }
+
+#app {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
+#GMap-canvas {
+  height: 100%;
+  width: 100%;
+  margin: 0px auto;
+}
+
+#GMap {
+  height: 70%;
+  width: 99%;
+  margin: 0px auto;
+
+}
+
+body, html, .main-container
+{
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
+#header {
+  height: 5%;
+  text-align: center;
+  font-family: endor;
+  margin-bottom: 2%;
+  margin-top: 3%;
+  /*transition: 0.3s ease;*/
+
+}
+
+.header-div {
+  display: inline-block;
+  transition: 0.3s ease;
+  font-size: 2em;
+
+}
+
+.header-div a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+#header:hover {
+  /*transform: scale(1.5, 1.5);*/
+
+}
+.header-div:hover {
+  transform: scale(1.5, 1.5);
+  color: goldenrod;
+
+}
+
+#date-slider {
+
+  width: 80%;
+  display: inline-block;
+  margin: 0 auto;
+}
+#input-data {
+
+  width: 60%;
+  margin: 0 auto;
+  text-align: center;
+
+  margin-top: 2%;
+  margin-bottom: 2%;
+}
+#textInput {
+
+  color: red;
+}
