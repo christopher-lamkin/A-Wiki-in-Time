@@ -12,13 +12,13 @@ var Home = React.createClass({
       data: []
     }
   },
-  onUpdate(val){
-    console.log('before', this.state)
+
+  handleUpdate(events){
     this.setState({
-      data: [val]
+      data: events
     })
-    console.log('after', this.state)
   },
+  
   componentWillMount() {
     if(google) {
       this.setState({isLoaded: true});
@@ -30,7 +30,7 @@ var Home = React.createClass({
     ? <div>loading...</div>
     : <div style={{width: '100%', height: '100%'}}>
       <Gmap initialCenter={initialCenter} />
-      <SearchContainer ref="search"/>
+      <SearchContainer onUpdate={this.handleUpdate.bind(this)}/>
       </div>
     }
   });

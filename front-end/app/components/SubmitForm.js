@@ -14,33 +14,26 @@ var SubmitForm = React.createClass({
           <form onSubmit={this.props.onFormSubmit}>
             <div className="form-group">
               <select className="form-control" name="type">
-                <option ref="eventTypeBattle" value="battles">Battles</option>
-                <option ref="eventTypeOther" value="other">Other</option>
+                <option value="battles">Battles</option>
+                <option value="other">Other</option>
               </select>
               <br /><br />
               <SliderStartYr />
               <SliderEndYr />
               <SliderRadius />
-              <input ref="inputLat" id='lat-input' type='hidden' name='lat' value='' />
-              <input ref="inputLong"id='long-input' type='hidden' name='long' value='' />
-
+              <input id='lat-input' type='hidden' name='lat' value='' />
+              <input id='long-input' type='hidden' name='long' value='' />
             </div>
             <div className="form-group col-sm-4 col-sm-offset-4">
               <input
                 className="btn btn-block btn-success"
-                type="submit" value="Submit" onClick={this.update} />
+                type="submit" value="Submit" />
             </div>
           </form>
         </div>
       </div>
     )
   },
-
-    update: function(){
-      var theVal = ReactDOM.findDOMNode(this.refs.inputLat).value;
-      console.log(this.props);
-      this.props.onUpdate(theVal);
-    }
 
 });
 

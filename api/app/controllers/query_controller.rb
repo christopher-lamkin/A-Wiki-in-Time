@@ -103,8 +103,7 @@ class QueryController < ApplicationController
           longitude: value['claims']['P625'][0]['mainsnak']['datavalue']['value']['longitude'],
           link: value.fetch('sitelinks', {}).fetch('enwiki', {}).fetch('url', "[No URL found]")
           }}
-        end
-        parsed_response
       end
+        parsed_response
     end
   end
