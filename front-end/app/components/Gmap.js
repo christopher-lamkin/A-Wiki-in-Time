@@ -183,12 +183,19 @@ var Gmap = React.createClass({
   },
 
   createMarkersArray: function(events) {
+    this.clearEventMarkers(this.state.eventMarkers);
     var that = this;
+    var eventMarkers = [];
     events.forEach(function(event) {
-      // this.state.data.forEach(function(event) {
-      //   console.log('event', event);
-      that.createMarker({lat: event.latitude, lng: event.longitude})
-      // })
+      var marker = that.createMarker({lat: event.latitude, lng: event.longitude});
+      eventMarkers.push(marker);
+    })
+    this.setState({eventMarkers: eventMarkers})
+  },
+
+  clearEventMarkers: function(eventMarkers) {
+    eventMarkers.forEach(function(marker) {
+      marker.setMap(null);
     })
   },
 
