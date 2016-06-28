@@ -15,8 +15,15 @@ module.exports = {
   },
   module: {
     loaders: [
-      {test: /\.jsx?$/, exclude: /node_modules/, loader: "babel-loader"},
-      { test: /\.css$/, loader: "style-loader!css-loader" }
+      { test: /\.jsx?$/, exclude: /node_modules/, loader: "babel-loader" },
+      { test: /\.css$/, loader: "style-loader!css-loader" },
+      {
+        test: /.*\.(gif|png|jpe?g|svg)$/i,
+        loaders: [
+          'file?hash=sha512&digest=hex&name=[hash].[ext]',
+          'image-webpack'
+        ]
+      }
     ]
   },
   plugins: [HTMLWebpackPluginConfig]

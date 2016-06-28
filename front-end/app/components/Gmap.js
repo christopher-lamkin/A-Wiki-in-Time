@@ -1,4 +1,5 @@
 var React = require('react');
+var blueMarkerA = require('../images/blue_MarkerA.png')
 // var initialCenter = {lat: 37.784580, lng: -122.397437};
 
 var styleArray = [
@@ -206,7 +207,8 @@ var Gmap = React.createClass({
     return new google.maps.Marker({
       position: this.mapCenter(),
       map: this.map,
-      draggable: true
+      draggable: true,
+      icon: blueMarkerA
     })
   },
 
