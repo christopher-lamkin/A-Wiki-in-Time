@@ -20,11 +20,7 @@ var Home = React.createClass({
   },
 
   componentDidUpdate() {
-    var that = this;
-    this.state.data.forEach(function(event) {
-      console.log('event', event);
-      that.refs.map.createMarker({lat: event.latitude, lng: event.longitude})
-    })
+    this.refs.map.createMarkersArray(this.state.data);
   },
 
   componentWillMount() {

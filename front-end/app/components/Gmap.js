@@ -127,7 +127,8 @@ var Gmap = React.createClass({
   return {
     zoom: 4,
     styles: styleArray,
-    mostRecentInfoWindow: { close: function(){} }
+    mostRecentInfoWindow: { close: function(){} },
+    eventMarkers: []
     };
   // static propTypes(){
   //   initialCenter: React.PropTypes.objectOf(React.PropTypes.number).isRequired
@@ -181,6 +182,16 @@ var Gmap = React.createClass({
     google.maps.event.clearListeners(map, 'zoom_changed')
   },
 
+  createMarkersArray: function(events) {
+    var that = this;
+    events.forEach(function(event) {
+      // this.state.data.forEach(function(event) {
+      //   console.log('event', event);
+      that.createMarker({lat: event.latitude, lng: event.longitude})
+      // })
+    })
+  },
+
   createMap: function() {
     var mapOptions = {
       zoom: this.state.zoom,
@@ -197,10 +208,12 @@ var Gmap = React.createClass({
   },
 
   createMarker: function(coordinates) {
-    return new google.maps.Marker({
+    var marker = new google.maps.Marker({
       position: coordinates,
       map: this.map
     })
+
+    return marker
   },
 
   createDraggableMarker: function() {
