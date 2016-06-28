@@ -19,6 +19,9 @@ function SubmitForm() {
               <SliderStartYr />
               <SliderEndYr />
               <SliderRadius />
+              <input id='lat-input' type='hidden' name='lat' value='' />
+              <input id='long-input' type='hidden' name='long' value='' />
+
             </div>
             <div className="form-group col-sm-4 col-sm-offset-4">
               <input

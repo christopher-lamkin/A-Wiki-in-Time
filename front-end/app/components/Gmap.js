@@ -169,6 +169,8 @@ var Gmap = React.createClass({
       var lat = event.latLng.lat();
       var long = event.latLng.lng();
       var latlng = {lat: lat, lng: long};
+      document.getElementById('lat-input').value = lat;
+      document.getElementById('long-input').value = long;
       this.infoWindow = that.createInfoWindow(latlng);
     });
   },
