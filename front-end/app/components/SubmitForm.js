@@ -2,6 +2,7 @@ var React = require('react');
 var PropTypes = React.PropTypes;
 var SliderStartYr = require('../components/SliderStartYr');
 var SliderEndYr = require('../components/SliderEndYr');
+var SliderRadius = require('../components/SliderRadius');
 var styles = require('../styles');
 
 function SubmitForm() {
@@ -17,6 +18,7 @@ function SubmitForm() {
               <br /><br />
               <SliderStartYr />
               <SliderEndYr />
+              <SliderRadius />
             </div>
             <div className="form-group col-sm-4 col-sm-offset-4">
               <input
