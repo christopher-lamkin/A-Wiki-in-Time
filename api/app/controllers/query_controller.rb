@@ -2,7 +2,7 @@ class QueryController < ApplicationController
 
     CATEGORIES_HASH = { 'battles' => 178561, 'archaeological_sites' => 839954 }
     LATITUDE_CONVERTER = 110.574
-    LONGITUDE_CONVERTER = 111
+    LONGITUDE_CONVERTER = 111.320
     def create
         p params.inspect
 
