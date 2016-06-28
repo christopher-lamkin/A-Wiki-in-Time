@@ -52,15 +52,52 @@ def parse_response(entities)
   end
 
   mechanize = Mechanize.new
+
+  archaeological_sites_data_url = 'https://wdq.wmflabs.org/api?q=CLAIM[31:839954]'
   battles_data_url = 'https://wdq.wmflabs.org/api?q=CLAIM[31:178561]'
-  response = HTTParty.get(battles_data_url)
+  archaeological_response = HTTParty.get(archaeological_sites_data_url)
   dates = []
 
 
+  response = HTTParty.get(battles_data_url)
   qIDS = create_qIDS(response['items'])
+  arch_qIDS = create_qIDS(archaeological_response['items'])
 
+  # arch_qIDS = arch_qIDS[0..200]
 
-  # qIDS = qIDS[200..400]
+  arch_qIDS.each_slice(50) do |qid_array|
+    qIDString = qid_array.join("%7C")
+    arch_media_url = "https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=#{qIDString}&props=labels%7Cdescriptions%7Cclaims%7Csitelinks%2Furls&languages=en&languag
+    efallback=1&sitefilter=&formatversion=2"
+    media_response = HTTParty.get(arch_media_url)
+    entities = media_response['entities']
+    p parsed_response = parse_response(entities)
+    parsed_response.each do |entity_hash|
+      entity_hash.each do |qID, value|
+        @event = Event.new(qID: qID, title: value[:title], end_time: value[:end_time], latitude: value[:latitude], longitude: value[:longitude], event_url: value[:link], point_in_time: value[:point_in_time], event_type: 'archaeological site' )
+        arch_url = value[:link]
+        begin
+          page = mechanize.get(arch_url)
+          description = ''
+          if page.at('#mw-content-text')
+            if page.at('#mw-content-text').xpath('./p')
+              if page.at('#mw-content-text').xpath('./p').first
+                description = page.at('#mw-content-text').xpath('./p').first.text
+              end
+            end
+          end
+
+          # date_box = page.at('.infobox table td')
+
+          @event.description = description
+          @event.save
+
+        rescue Mechanize::ResponseCodeError
+          break
+        end
+      end
+    end
+  end
   qIDS.each_slice(50) do |qid_array|
     qIDString = qid_array.join("%7C")
     battles_media_url = "https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=#{qIDString}&props=labels%7Cdescriptions%7Cclaims%7Csitelinks%2Furls&languages=en&languag
@@ -70,11 +107,11 @@ def parse_response(entities)
     p parsed_response = parse_response(entities)
     parsed_response.each do |entity_hash|
       entity_hash.each do |qID, value|
-        @event = Event.new(qID: qID, title: value[:title], description: value[:description], end_time: value[:end_time], latitude: value[:latitude], longitude: value[:longitude], event_url: value[:link], point_in_time: value[:point_in_time] )
+        @event = Event.new(qID: qID, title: value[:title], end_time: value[:end_time], latitude: value[:latitude], longitude: value[:longitude], event_url: value[:link], point_in_time: value[:point_in_time], event_type: 'battle' )
         battle_url = value[:link]
         begin
           page = mechanize.get(battle_url)
-
+          description = page.at('#mw-content-text').xpath('./p').first.text
           date_box = page.at('.infobox table td')
           break if date_box.nil?
           date = date_box.text.strip
@@ -95,6 +132,15 @@ def parse_response(entities)
             parsed_date = parsed_date.to_i
             dates << parsed_date
             @event.scraped_date = parsed_date
+            description = ''
+            if page.at('#mw-content-text')
+              if page.at('#mw-content-text').xpath('./p')
+                if page.at('#mw-content-text').xpath('./p').first
+                  description = page.at('#mw-content-text').xpath('./p').first.text
+                end
+              end
+            end
+            @event.description = description
             @event.save
           else
             if parsed_date[-2..-1] == 'BC'
@@ -105,6 +151,15 @@ def parse_response(entities)
               dates << parsed_date
             end
             @event.scraped_date = parsed_date
+            description = ''
+            if page.at('#mw-content-text')
+              if page.at('#mw-content-text').xpath('./p')
+                if page.at('#mw-content-text').xpath('./p').first
+                  description = page.at('#mw-content-text').xpath('./p').first.text
+                end
+              end
+            end
+            @event.description = description
             @event.save
           end
         rescue Mechanize::ResponseCodeError
