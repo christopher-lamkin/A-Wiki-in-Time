@@ -33,8 +33,8 @@ ActiveRecord::Schema.define(version: 20160626183833) do
     t.float    "latitude"
     t.float    "longitude"
     t.integer  "radius"
-    t.datetime "start_date"
-    t.datetime "end_date"
+    t.integer  "start_date"
+    t.integer  "end_date"
     t.string   "event_type"
     t.text     "notes"
     t.datetime "created_at", null: false

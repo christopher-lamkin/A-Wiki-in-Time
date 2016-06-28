@@ -4,39 +4,48 @@ var SliderStartYr = require('../components/SliderStartYr');
 var SliderEndYr = require('../components/SliderEndYr');
 var SliderRadius = require('../components/SliderRadius');
 var styles = require('../styles');
+var ReactDOM = require('react-dom');
 
-function SubmitForm() {
-  return (
-    <div className="jumbotron col-sm-6 col-sm-offset-3 text-center" style={styles.transparentBg}>
+var SubmitForm = React.createClass({
+ render() {
+
+  return(  <div className="jumbotron col-sm-6 col-sm-offset-3 text-center" style={styles.transparentBg}>
         <div className="col-sm-12" >
-          <form>
+          <form onSubmit={this.props.onFormSubmit}>
             <div className="form-group">
               <select className="form-control" name="type">
-                <option value="battles">Battles</option>
-                <option value="other">Other</option>
+                <option ref="eventTypeBattle" value="battles">Battles</option>
+                <option ref="eventTypeOther" value="other">Other</option>
               </select>
               <br /><br />
               <SliderStartYr />
               <SliderEndYr />
               <SliderRadius />
-              <input id='lat-input' type='hidden' name='lat' value='' />
-              <input id='long-input' type='hidden' name='long' value='' />
+              <input ref="inputLat" id='lat-input' type='hidden' name='lat' value='' />
+              <input ref="inputLong"id='long-input' type='hidden' name='long' value='' />
 
             </div>
             <div className="form-group col-sm-4 col-sm-offset-4">
               <input
                 className="btn btn-block btn-success"
-                type="submit" value="Submit" />
+                type="submit" value="Submit" onClick={this.update} />
             </div>
           </form>
         </div>
-    </div>
-  )
+      </div>
+    )
+  },
+
+    update: function(){
+      var theVal = ReactDOM.findDOMNode(this.refs.inputLat).value;
+      console.log(this.props);
+      this.props.onUpdate(theVal);
+    }
+
+});
+
+SubmitForm.propTypes = {
+  onFormSubmit: PropTypes.func.isRequired
 }
-
-
-// Prompt.propTypes = {
-//
-// };
 
 module.exports = SubmitForm;

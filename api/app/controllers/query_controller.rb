@@ -4,13 +4,13 @@ class QueryController < ApplicationController
 
     def create
         p params.inspect
-        start_year = params[:date].to_i - params[:year_range].to_i
+        start_year = params[:start_year].to_i
       #   if start_year >= 0
       #     start_year = '+' + params[:date] + '-00-00T00:00:00z'
       # else
       #     start_year = '-' + params[:date] + '-00-00T00:00:00z'
       # end
-      end_year = params[:date].to_i + params[:year_range].to_i
+      end_year = params[:end_year].to_i
       # if end_year >= 0
       #     end_year = '+' + params[:date] + '-00-00T00:00:00z'
       # else
@@ -96,4 +96,3 @@ class QueryController < ApplicationController
                 parsed_response
             end
         end
-

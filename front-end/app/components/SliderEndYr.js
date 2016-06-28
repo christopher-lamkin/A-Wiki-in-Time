@@ -47,7 +47,7 @@ var SliderEndYr = React.createClass({
         <br />
        End Year: {newValue}
        <br /><br />
-       <input type="hidden" value={newValue} name="end_year"/>
+       <input ref="sliderEnd" type="hidden" value={newValue} name="end_year"/>
       </div>
     )
   }

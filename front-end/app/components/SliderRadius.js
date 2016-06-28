@@ -44,7 +44,7 @@ var SliderRadius = React.createClass({
         <br />
        Radius: {newValue}
        <br /><br />
-       <input type="hidden" value={newValue} name="radius"/>
+       <input ref="sliderRad" type="hidden" value={newValue} name="radius"/>
       </div>
     )
   }
