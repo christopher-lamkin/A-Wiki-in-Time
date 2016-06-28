@@ -5,7 +5,8 @@ class CreateEvents < ActiveRecord::Migration[5.0]
       t.string :qID
       t.string :title
       t.text :description
-      t.datetime :date
+      t.datetime :end_time
+      t.datetime :point_in_time
       t.integer :scraped_date
       t.float :latitude
       t.float :longitude

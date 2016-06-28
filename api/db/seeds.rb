@@ -40,16 +40,10 @@ def parse_response(entities)
     {entity => {
       title: value.fetch('labels', {}).fetch('en', {}).fetch('value', "[No title found]"),
       description: value.fetch('descriptions', {}).fetch('en', {}).fetch('value', "[No description found]"),
-      # if value['claims']['P625']
-      #   latitude: value['claims']['P625'][0]['mainsnak']['datavalue']['value']['latitude'],
-      #   longitude: value['claims']['P625'][0]['mainsnak']['datavalue']['value']['longitude'],
-      # end
-      # if value['claims']['P582']
-      #   end_time: value['claims']['P582'][0]['mainsnak']['datavalue']['value']['time'],
-      # end
-      # if value['claims']['P585']
-      #   point_in_time: value['claims']['P582'][0]['mainsnak']['datavalue']['value']['time'],
-      # end
+      latitude: value.fetch('claims', {}).fetch('P625', [{}]).fetch(0).fetch('mainsnak', {}).fetch('datavalue', {}).fetch('value', {}).fetch('latitude', nil),
+      longitude: value.fetch('claims', {}).fetch('P625', [{}]).fetch(0).fetch('mainsnak', {}).fetch('datavalue', {}).fetch('value', {}).fetch('longitude', nil),
+      end_time: value.fetch('claims', {}).fetch('P582', [{}]).fetch(0).fetch('mainsnak', {}).fetch('datavalue', {}).fetch('value', {}).fetch('time', nil),
+      point_in_time: value.fetch('claims', {}).fetch('P585', [{}]).fetch(0).fetch('mainsnak', {}).fetch('datavalue', {}).fetch('value', {}).fetch('time', nil),
       link: value.fetch('sitelinks', {}).fetch('enwiki', {}).fetch('url', "[No URL found]")
       }}
     end
@@ -60,7 +54,7 @@ def parse_response(entities)
   p battles_data_url = 'https://wdq.wmflabs.org/api?q=CLAIM[31:178561]'
   p response = HTTParty.get(battles_data_url)
   dates = []
-
+  date_strings = []
   p qIDS = create_qIDS(response['items'])
 
 
@@ -74,7 +68,7 @@ def parse_response(entities)
     p parsed_response = parse_response(entities)
     parsed_response.each do |entity_hash|
       entity_hash.each do |qID, value|
-        # @event = Event.new(qID: qID, title: value[:title], description: value[:description], date: value[:end_time], latitude: value[:latitude], longitude: value[:longitude], event_url: value[:link] )
+        @event = Event.new(qID: qID, title: value[:title], description: value[:description], end_time: value[:end_time], latitude: value[:latitude], longitude: value[:longitude], event_url: value[:link], point_in_time: value[:point_in_time] )
         battle_url = value[:link]
         begin
           page = mechanize.get(battle_url)
@@ -82,6 +76,7 @@ def parse_response(entities)
           date_box = page.at('.infobox table td')
           break if date_box.nil?
           p date = date_box.text.strip
+          date_strings << date
           parsed_date_array_array = date.scan(/(\d{1,4}\sAD|\d{1,4}\sBC)/)
           unless parsed_date_array_array.empty?
             parsed_date_array = parsed_date_array_array.last
@@ -102,22 +97,20 @@ def parse_response(entities)
             p parsed_date = date.scan(/\d{3,4}/).last
             p parsed_date = parsed_date.to_i
             dates << parsed_date
+            @event.scraped_date = parsed_date
+            @event.save
             p '*'*100
           else
-            dates << parsed_date
+            if parsed_date[-2..-1] == 'BC'
+              parsed_date = (parsed_date[0...-3].to_i)*-1
+              dates << parsed_date
+            else
+              parsed_date = parsed_date[0...-3]
+              dates << parsed_date
+            end
+            @event.scraped_date = parsed_date
+            @event.save
           end
-          # parsed_date = ''
-          # if parsed_date.scan(/[B][C]/).last
-          #   parsed_date = (parsed_date[0...-3].to_i)*-1
-          # end
-          # if parsed_date.scan(/[A][D]/).last
-          #   parsed_date = parsed_date[0...-3].to_i
-          # end
-          # parsed_date = date
-
-          # BC check
-          # if parsed_date.scan(/)
-          # @event.scraped_date = parsed_date
         rescue Mechanize::ResponseCodeError
           break
         end
@@ -127,5 +120,6 @@ def parse_response(entities)
 
   p dates
   p dates.length
-
+  p date_strings
+  p date_strings.length
 

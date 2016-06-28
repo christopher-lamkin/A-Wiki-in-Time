@@ -19,13 +19,14 @@ ActiveRecord::Schema.define(version: 20160626183833) do
     t.string   "qID"
     t.string   "title"
     t.text     "description"
-    t.datetime "date"
+    t.datetime "end_time"
+    t.datetime "point_in_time"
     t.integer  "scraped_date"
     t.float    "latitude"
     t.float    "longitude"
     t.string   "event_url"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
   end
 
   create_table "queries", force: :cascade do |t|

@@ -50,7 +50,7 @@ class QueryController < ApplicationController
 
             adjusted_response.each do |entity|
                 entity.each do |qID, value|
-                    @event = Event.create(qID: qID, title: value[:title], description: value[:description], date: value[:end_time], latitude: value[:latitude], longitude: value[:longitude], event_url: value[:link] )
+                    @event = Event.create(qID: qID, title: value[:title], description: value[:description], end_time: value[:end_time], latitude: value[:latitude], longitude: value[:longitude], event_url: value[:link] )
                     QueriesEvent.create(query_id: @query.id, event_id: @event.id )
                     p "*" * 20
                     p value
