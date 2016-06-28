@@ -5,7 +5,9 @@ var reactNativeBootstrapSliderObj = require('react-bootstrap-native-slider');
 var ReactNativeBootstrapSlider = reactNativeBootstrapSliderObj.ReactNativeBootstrapSlider;
 // var reactBootstrapSliderObj = require("react-bootstrap-slider");
 // var ReactBootstrapSlider = reactBootstrapSliderObj.ReactBootstrapSlider;
-
+function puke(obj) {
+  return <pre>{JSON.stringify(obj, null, ' ')}</pre>
+}
 var Slider = React.createClass({
   getInitialState(){
     var today = new Date();
@@ -35,7 +37,6 @@ var Slider = React.createClass({
 
   render(){
     var newValue = this.state.currentValue;
-    // var newValue2 = this.state.currentValue[1];
     return(
       <div id="slider-details" >
         <ReactNativeBootstrapSlider
@@ -50,6 +51,7 @@ var Slider = React.createClass({
        Year: {newValue}
        <br /><br />
        <input type="hidden" value={newValue} name="year"/>
+       <div> Slider: {puke(this.props)} </div>
       </div>
     )
   }

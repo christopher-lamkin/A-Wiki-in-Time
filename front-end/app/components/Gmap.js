@@ -162,7 +162,7 @@ var Gmap = React.createClass({
     var that = this;
 
     google.maps.event.addListener(this.map, 'zoom_changed', function(){
-      this.handleZoomChange()
+      that.handleZoomChange()
     });
 
     google.maps.event.addListener(this.marker, 'dragend', function (event) {
@@ -228,4 +228,3 @@ var Gmap = React.createClass({
 });
 
 module.exports = Gmap;
-

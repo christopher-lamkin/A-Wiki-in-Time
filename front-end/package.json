@@ -11,8 +11,10 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.12.0",
+    "babel-runtime": "^6.9.2",
     "jquery": "^3.0.0",
     "react": "^15.1.0",
+    "react-async-script": "^0.6.0",
     "react-bootstrap-native-slider": "^2.0.0",
     "react-dom": "^15.1.0",
     "react-router": "^2.0.0"
