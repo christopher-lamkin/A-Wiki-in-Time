@@ -260,9 +260,14 @@ function newAddMarkerWithTimeout(position, timeout, battle) {
     } else {
       adjusted_scraped_date = battle.scraped_date
     }
-
+    var infoWindowContent;
+    if (battle.scraped_date) {
+      infoWindowContent = "<strong>Title:</strong> " + battle.title + "<br><strong>Description: </strong>" + battle.description + "<br><strong>Date:</strong> " + adjusted_scraped_date + "<br><strong>Wiki URL:</strong> <a href=" + battle.event_url + " target='_blank'> " + battle.event_url + "</a>"
+    } else {
+      infoWindowContent = "<strong>Title:</strong> " + battle.title + "<br><strong>Description: </strong>" + battle.description + "<br><strong>Wiki URL:</strong> <a href=" + battle.event_url + " target='_blank'> " + battle.event_url + "</a>"
+    }
     var infoWindow = new google.maps.InfoWindow({
-      content: "<strong>Title:</strong> " + battle.title + "<br><strong>Description: </strong>" + battle.description + "<br><strong>Date:</strong> " + adjusted_scraped_date + "<br><strong>Wiki URL:</strong> <a href=" + battle.event_url + " target='_blank'> " + battle.event_url + "</a>"
+      content: infoWindowContent
     })
     mostRecentInfoWindow = infoWindow;
     marker.addListener('click', function() {
