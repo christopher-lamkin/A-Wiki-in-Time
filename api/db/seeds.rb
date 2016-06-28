@@ -5,10 +5,6 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
-# User.delete_all
-# Query.delete_all
-# Event.delete_all
-# QueriesEvent.delete_all
 
 
 # User.create(
@@ -31,6 +27,11 @@
 require 'mechanize'
 require 'httparty'
 
+User.delete_all
+Query.delete_all
+Event.delete_all
+QueriesEvent.delete_all
+
 def create_qIDS(id_array)
   id_array.map{|id| 'Q'+id.to_s}
 end
@@ -39,10 +40,11 @@ def parse_response(entities)
   parsed_response = entities.map do |entity, value|
     {entity => {
       title: value.fetch('labels', {}).fetch('en', {}).fetch('value', "[No title found]"),
-      # description: value.fetch('descriptions', {}).fetch('en', {}).fetch('value', "[No description found]"),
-      # latitude: value['claims']['P625'][0]['mainsnak']['datavalue']['value']['latitude'],
-      # longitude: value['claims']['P625'][0]['mainsnak']['datavalue']['value']['longitude'],
-      # end_time: value['claims']['P582'][0]['mainsnak']['datavalue']['value']['time'],
+      description: value.fetch('descriptions', {}).fetch('en', {}).fetch('value', "[No description found]"),
+      latitude: value.fetch('claims', {}).fetch('P625', [{}]).fetch(0).fetch('mainsnak', {}).fetch('datavalue', {}).fetch('value', {}).fetch('latitude', nil),
+      longitude: value.fetch('claims', {}).fetch('P625', [{}]).fetch(0).fetch('mainsnak', {}).fetch('datavalue', {}).fetch('value', {}).fetch('longitude', nil),
+      end_time: value.fetch('claims', {}).fetch('P582', [{}]).fetch(0).fetch('mainsnak', {}).fetch('datavalue', {}).fetch('value', {}).fetch('time', nil),
+      point_in_time: value.fetch('claims', {}).fetch('P585', [{}]).fetch(0).fetch('mainsnak', {}).fetch('datavalue', {}).fetch('value', {}).fetch('time', nil),
       link: value.fetch('sitelinks', {}).fetch('enwiki', {}).fetch('url', "[No URL found]")
       }}
     end
@@ -50,34 +52,66 @@ def parse_response(entities)
   end
 
   mechanize = Mechanize.new
-  p battles_data_url = 'https://wdq.wmflabs.org/api?q=CLAIM[31:178561]'
-  p response = HTTParty.get(battles_data_url)
+  battles_data_url = 'https://wdq.wmflabs.org/api?q=CLAIM[31:178561]'
+  response = HTTParty.get(battles_data_url)
   dates = []
 
-  p qIDS = create_qIDS(response['items'])
 
-  qIDS.each_slice(200) do |qid_array|
-    p qIDString = qid_array.join("%7C")
-    p battles_media_url = "https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=#{qIDString}&props=labels%7Cdescriptions%7Cclaims%7Csitelinks%2Furls&languages=en&languag
+  qIDS = create_qIDS(response['items'])
+
+
+  # qIDS = qIDS[200..400]
+  qIDS.each_slice(50) do |qid_array|
+    qIDString = qid_array.join("%7C")
+    battles_media_url = "https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=#{qIDString}&props=labels%7Cdescriptions%7Cclaims%7Csitelinks%2Furls&languages=en&languag
     efallback=1&sitefilter=&formatversion=2"
-    p media_response = HTTParty.get(battles_media_url)
-    p entities = media_response['entities']
+    media_response = HTTParty.get(battles_media_url)
+    entities = media_response['entities']
     p parsed_response = parse_response(entities)
     parsed_response.each do |entity_hash|
       entity_hash.each do |qID, value|
+        @event = Event.new(qID: qID, title: value[:title], description: value[:description], end_time: value[:end_time], latitude: value[:latitude], longitude: value[:longitude], event_url: value[:link], point_in_time: value[:point_in_time] )
         battle_url = value[:link]
         begin
-            page = mechanize.get(battle_url)
-            date = page.at('.infobox table td').text.strip
-            dates << date
-          rescue StandardError
-            break
+          page = mechanize.get(battle_url)
+
+          date_box = page.at('.infobox table td')
+          break if date_box.nil?
+          date = date_box.text.strip
+
+          parsed_date_array_array = date.scan(/(\d{1,4}\sAD|\d{1,4}\sBC)/)
+          unless parsed_date_array_array.empty?
+            parsed_date_array = parsed_date_array_array.last
+          end
+          if parsed_date_array
+            parsed_date = parsed_date_array.first
+          else
+            parsed_date = nil
+          end
+
+          if parsed_date.nil?
+            date
+            parsed_date = date.scan(/\d{3,4}/).last
+            parsed_date = parsed_date.to_i
+            dates << parsed_date
+            @event.scraped_date = parsed_date
+            @event.save
+          else
+            if parsed_date[-2..-1] == 'BC'
+              parsed_date = (parsed_date[0...-3].to_i)*-1
+              dates << parsed_date
+            else
+              parsed_date = parsed_date[0...-3]
+              dates << parsed_date
+            end
+            @event.scraped_date = parsed_date
+            @event.save
+          end
+        rescue Mechanize::ResponseCodeError
+          break
         end
       end
     end
   end
-
-  p dates
-
 
 
