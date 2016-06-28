@@ -1,6 +1,6 @@
 class QueryController < ApplicationController
 
-    CATEGORIES_HASH = { 'battles' => 178561, 'archaeological_sites' => 839954 }
+    CATEGORIES_HASH = { 'battles' => 178561, 'archaeological_sites' => 839954, 'sieges' => 188055 }
     LATITUDE_CONVERTER = 110.574
     LONGITUDE_CONVERTER = 111.320
     def create

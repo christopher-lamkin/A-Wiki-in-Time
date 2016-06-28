@@ -244,14 +244,16 @@ function newAddMarkerWithTimeout(position, timeout, battle) {
   var colors = ['blue', 'brown', 'darkgreen', 'green', 'orange', 'paleblue', 'pink', 'purple', 'red', 'yellow']
   var letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 
-  var icon_string = colors[Math.floor ( Math.random() * colors.length )] + '_Marker' + letters[Math.floor ( Math.random() * letters.length )] + '.png'
-  var random_icon_path = '/../front-end/public/images/google_maps_markers/' + icon_string
+  var iconString = colors[Math.floor ( Math.random() * colors.length )] + '_Marker' + letters[Math.floor ( Math.random() * letters.length )] + '.png'
+  var randomIconPath = '/../front-end/public/images/google_maps_markers/' + iconString
+  var yoshiIconPath = '/../front-end/public/images/small_yoshis.png'
+
   window.setTimeout(function() {
     var marker = new google.maps.Marker({
       position: position,
       map: map,
       animation: google.maps.Animation.DROP,
-      icon: random_icon_path
+      icon: yoshiIconPath
     })
     markers.push(marker);
     var adjusted_scraped_date
