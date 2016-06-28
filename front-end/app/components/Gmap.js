@@ -128,7 +128,9 @@ var Gmap = React.createClass({
     zoom: 4,
     styles: styleArray,
     mostRecentInfoWindow: { close: function(){} },
-    eventMarkers: []
+    mostRecentMarkerWindow: { close: function(){} },
+    eventMarkers: [],
+    map: {}
     };
   // static propTypes(){
   //   initialCenter: React.PropTypes.objectOf(React.PropTypes.number).isRequired
@@ -187,10 +189,12 @@ var Gmap = React.createClass({
     var that = this;
     var eventMarkers = [];
     events.forEach(function(event) {
-      var marker = that.createMarker({lat: event.latitude, lng: event.longitude});
+      // var marker = that.createMarker({lat: event.latitude, lng: event.longitude});
+      var marker = that.newAddMarkerWithTimeout({lat: event.latitude, lng: event.longitude}, 1000, event)
+      console.log(marker);
       eventMarkers.push(marker);
     })
-    this.setState({eventMarkers: eventMarkers})
+    this.setState({eventMarkers: eventMarkers});
   },
 
   clearEventMarkers: function(eventMarkers) {
@@ -199,12 +203,45 @@ var Gmap = React.createClass({
     })
   },
 
+  newAddMarkerWithTimeout: function(position, timeout, battle) {
+    var that = this;
+    this.state.mostRecentInfoWindow.close();
+    // var mark;
+    var marker = new google.maps.Marker({
+      position: position,
+      map: that.state.map,
+      animation: google.maps.Animation.DROP
+    })
+    window.setTimeout(function() {
+      var adjusted_scraped_date;
+      if (battle.scraped_date < 0) {
+        adjusted_scraped_date = (battle.scraped_date*-1).toString() + ' BC'
+      } else {
+        adjusted_scraped_date = battle.scraped_date
+      }
+
+      var infoWindow = new google.maps.InfoWindow({
+        content: "<strong>Title:</strong> " + battle.title + "<br><strong>Description: </strong>" + battle.description + "<br><strong>Date:</strong> " + adjusted_scraped_date + "<br><strong>Wiki URL:</strong> <a href=" + battle.event_url + " target='_blank'> " + battle.event_url + "</a>"
+      })
+      marker.addListener('click', function() {
+        that.state.mostRecentMarkerWindow.close();
+        infoWindow.open(that.map, marker);
+        that.setState({mostRecentMarkerWindow: infoWindow});
+      })
+
+    }, timeout);
+    return marker;
+  },
+
   createMap: function() {
     var mapOptions = {
       zoom: this.state.zoom,
-      center: this.mapCenter()
+      center: this.mapCenter(),
+      styles: this.state.styles
     }
-    return new google.maps.Map(this.refs.mapCanvas, mapOptions)
+    var map = new google.maps.Map(this.refs.mapCanvas, mapOptions)
+    this.setState({map: map})
+    return map
   },
 
   mapCenter: function() {
