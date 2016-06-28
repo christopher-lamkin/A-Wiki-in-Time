@@ -5,10 +5,6 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
-# User.delete_all
-# Query.delete_all
-# Event.delete_all
-# QueriesEvent.delete_all
 
 
 # User.create(
@@ -31,6 +27,11 @@
 require 'mechanize'
 require 'httparty'
 
+User.delete_all
+Query.delete_all
+Event.delete_all
+QueriesEvent.delete_all
+
 def create_qIDS(id_array)
   id_array.map{|id| 'Q'+id.to_s}
 end
@@ -51,20 +52,21 @@ def parse_response(entities)
   end
 
   mechanize = Mechanize.new
-  p battles_data_url = 'https://wdq.wmflabs.org/api?q=CLAIM[31:178561]'
-  p response = HTTParty.get(battles_data_url)
+  battles_data_url = 'https://wdq.wmflabs.org/api?q=CLAIM[31:178561]'
+  response = HTTParty.get(battles_data_url)
   dates = []
-  date_strings = []
-  p qIDS = create_qIDS(response['items'])
 
 
-  qIDS = qIDS[0..200]
-  qIDS.each_slice(200) do |qid_array|
-    p qIDString = qid_array.join("%7C")
-    p battles_media_url = "https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=#{qIDString}&props=labels%7Cdescriptions%7Cclaims%7Csitelinks%2Furls&languages=en&languag
+  qIDS = create_qIDS(response['items'])
+
+
+  # qIDS = qIDS[200..400]
+  qIDS.each_slice(50) do |qid_array|
+    qIDString = qid_array.join("%7C")
+    battles_media_url = "https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=#{qIDString}&props=labels%7Cdescriptions%7Cclaims%7Csitelinks%2Furls&languages=en&languag
     efallback=1&sitefilter=&formatversion=2"
-    p media_response = HTTParty.get(battles_media_url)
-    p entities = media_response['entities']
+    media_response = HTTParty.get(battles_media_url)
+    entities = media_response['entities']
     p parsed_response = parse_response(entities)
     parsed_response.each do |entity_hash|
       entity_hash.each do |qID, value|
@@ -72,11 +74,11 @@ def parse_response(entities)
         battle_url = value[:link]
         begin
           page = mechanize.get(battle_url)
-          p '%'*100
+
           date_box = page.at('.infobox table td')
           break if date_box.nil?
-          p date = date_box.text.strip
-          date_strings << date
+          date = date_box.text.strip
+
           parsed_date_array_array = date.scan(/(\d{1,4}\sAD|\d{1,4}\sBC)/)
           unless parsed_date_array_array.empty?
             parsed_date_array = parsed_date_array_array.last
@@ -86,20 +88,14 @@ def parse_response(entities)
           else
             parsed_date = nil
           end
-          puts "PARSED   #{parsed_date}"
-          puts parsed_date.class
-          # p parsed_date = parsed_date || ''
-          p '%'*100
 
           if parsed_date.nil?
-            p '*'*100
-            p date
-            p parsed_date = date.scan(/\d{3,4}/).last
-            p parsed_date = parsed_date.to_i
+            date
+            parsed_date = date.scan(/\d{3,4}/).last
+            parsed_date = parsed_date.to_i
             dates << parsed_date
             @event.scraped_date = parsed_date
             @event.save
-            p '*'*100
           else
             if parsed_date[-2..-1] == 'BC'
               parsed_date = (parsed_date[0...-3].to_i)*-1
@@ -118,8 +114,4 @@ def parse_response(entities)
     end
   end
 
-  p dates
-  p dates.length
-  p date_strings
-  p date_strings.length
 
