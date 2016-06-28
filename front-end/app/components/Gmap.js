@@ -191,7 +191,6 @@ var Gmap = React.createClass({
     events.forEach(function(event) {
       // var marker = that.createMarker({lat: event.latitude, lng: event.longitude});
       var marker = that.newAddMarkerWithTimeout({lat: event.latitude, lng: event.longitude}, 1000, event)
-      console.log(marker);
       eventMarkers.push(marker);
     })
     this.setState({eventMarkers: eventMarkers});
