@@ -5,10 +5,7 @@ var reactNativeBootstrapSliderObj = require('react-bootstrap-native-slider');
 var ReactNativeBootstrapSlider = reactNativeBootstrapSliderObj.ReactNativeBootstrapSlider;
 // var reactBootstrapSliderObj = require("react-bootstrap-slider");
 // var ReactBootstrapSlider = reactBootstrapSliderObj.ReactBootstrapSlider;
-function puke(obj) {
-  return <pre>{JSON.stringify(obj, null, ' ')}</pre>
-}
-var Slider = React.createClass({
+var SliderEndYr = React.createClass({
   getInitialState(){
     var today = new Date();
     var year = today.getFullYear();
@@ -45,16 +42,15 @@ var Slider = React.createClass({
         step={this.state.step}
         max={this.state.max}
         min={this.state.min} />
-      <b style={{float: 'left'}}>year {this.state.min}</b>
-      <b style={{float: 'right'}}>{this.state.max}</b>
-        <br /> <br />
-       Year: {newValue}
+      <b style={{float: 'left'}}>{this.state.min} AD</b>
+      <b style={{float: 'right'}}>{this.state.max} AD</b>
+        <br />
+       End Year: {newValue}
        <br /><br />
-       <input type="hidden" value={newValue} name="year"/>
-       <div> Slider: {puke(this.props)} </div>
+       <input type="hidden" value={newValue} name="end_year"/>
       </div>
     )
   }
 })
 
-module.exports = Slider;
+module.exports = SliderEndYr;
