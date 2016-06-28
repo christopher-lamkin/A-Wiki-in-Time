@@ -78,7 +78,15 @@ def parse_response(entities)
         arch_url = value[:link]
         begin
           page = mechanize.get(arch_url)
-          description = page.at('#mw-content-text').xpath('./p').first.text
+          description = ''
+          if page.at('#mw-content-text')
+            if page.at('#mw-content-text').xpath('./p')
+              if page.at('#mw-content-text').xpath('./p').first
+                description = page.at('#mw-content-text').xpath('./p').first.text
+              end
+            end
+          end
+
           # date_box = page.at('.infobox table td')
 
           @event.description = description
@@ -124,6 +132,14 @@ def parse_response(entities)
             parsed_date = parsed_date.to_i
             dates << parsed_date
             @event.scraped_date = parsed_date
+            description = ''
+            if page.at('#mw-content-text')
+              if page.at('#mw-content-text').xpath('./p')
+                if page.at('#mw-content-text').xpath('./p').first
+                  description = page.at('#mw-content-text').xpath('./p').first.text
+                end
+              end
+            end
             @event.description = description
             @event.save
           else
@@ -135,6 +151,14 @@ def parse_response(entities)
               dates << parsed_date
             end
             @event.scraped_date = parsed_date
+            description = ''
+            if page.at('#mw-content-text')
+              if page.at('#mw-content-text').xpath('./p')
+                if page.at('#mw-content-text').xpath('./p').first
+                  description = page.at('#mw-content-text').xpath('./p').first.text
+                end
+              end
+            end
             @event.description = description
             @event.save
           end
