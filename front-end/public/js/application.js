@@ -161,11 +161,15 @@ function initMap() {
 
 
 
+  var image_path = '/../front-end/public/images/google_maps_markers/blue_MarkerA.png'
   marker = new google.maps.Marker({
     // position: map.getCenter(),
     position: myLatLng,
     map: map,
-    draggable: true
+    draggable: true,
+    icon: image_path
+
+
   });
   $('#lat-input').val(myLatLng.lat);
   $('#long-input').val(myLatLng.lng);
