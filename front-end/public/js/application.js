@@ -228,7 +228,33 @@ function addMarkerWithTimeout(position, timeout, battle) {
 
   }, timeout);
 }
+function newAddMarkerWithTimeout(position, timeout, battle) {
+  window.setTimeout(function() {
+    var marker = new google.maps.Marker({
+      position: position,
+      map: map,
+      animation: google.maps.Animation.DROP
+    })
+    markers.push(marker);
+    var adjusted_scraped_date
+    if (battle.scraped_date < 0) {
+      adjusted_scraped_date = (battle.scraped_date*-1).toString() + ' BC'
+    } else {
+      adjusted_scraped_date = battle.scraped_date
+    }
 
+    var infoWindow = new google.maps.InfoWindow({
+      content: "<strong>Title:</strong> " + battle.title + "<br><strong>Description: </strong>" + battle.description + "<br><strong>Date:</strong> " + adjusted_scraped_date + "<br><strong>Wiki URL:</strong> <a href=" + battle.event_url + " target='_blank'> " + battle.event_url + "</a>"
+    })
+    mostRecentInfoWindow = infoWindow;
+    marker.addListener('click', function() {
+      mostRecentInfoWindow.close();
+      infoWindow.open(map, marker);
+      mostRecentInfoWindow = infoWindow;
+    })
+
+  }, timeout);
+}
 function addArchaeologyMarkerWithTimeout(position, timeout, site) {
   window.setTimeout(function() {
     var marker = new google.maps.Marker({
@@ -286,19 +312,27 @@ $(document).ready(function() {
       if (!!response.error) {
         console.log(response);
       } else {
-        var qids = response[0].qids
-        var type = response[0].type
         clearMarkers();
-        for (i = 1; i < response.length; i++) {
-          var event = response[i][qids[i-1]];
-          var coordinates = {lat: event.latitude, lng: event.longitude};
+        events_array = response.events
+        for (i = 0; i < events_array.length; i++) {
+          var event = events_array[i]
+          var coordinates = {lat: event.latitude, lng: event.longitude}
+          newAddMarkerWithTimeout(coordinates, i*400, event)
 
-          if (type == 'battles') {
-            addMarkerWithTimeout(coordinates, i*400, event);
-          } else {
-            addArchaeologyMarkerWithTimeout(coordinates, i*400, event);
-          }
         }
+        // var qids = response[0].qids
+        // var type = response[0].type
+        // clearMarkers();
+        // for (i = 1; i < response.length; i++) {
+        //   var event = response[i][qids[i-1]];
+        //   var coordinates = {lat: event.latitude, lng: event.longitude};
+
+        //   if (type == 'battles') {
+        //     addMarkerWithTimeout(coordinates, i*400, event);
+        //   } else {
+        //     addArchaeologyMarkerWithTimeout(coordinates, i*400, event);
+        //   }
+        // }
       }
     })
   })
