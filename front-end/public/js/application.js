@@ -328,7 +328,7 @@ $(document).ready(function() {
         for (i = 0; i < events_array.length; i++) {
           var event = events_array[i]
           var coordinates = {lat: event.latitude, lng: event.longitude}
-          newAddMarkerWithTimeout(coordinates, i*400, event)
+          newAddMarkerWithTimeout(coordinates, i*(4000/events_array.length), event)
 
         }
         // var qids = response[0].qids
