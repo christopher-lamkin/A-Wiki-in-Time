@@ -247,14 +247,23 @@ function newAddMarkerWithTimeout(position, timeout, battle) {
   var iconString = colors[Math.floor ( Math.random() * colors.length )] + '_Marker' + letters[Math.floor ( Math.random() * letters.length )] + '.png'
   var randomIconPath = '/../front-end/public/images/google_maps_markers/' + iconString
   var yoshiIconPath = '/../front-end/public/images/small_yoshis.png'
+  var iconPath;
+
+  if (battle.event_type == 'battle') {
+    iconPath = yoshiIconPath;
+  } else {
+    iconPath = randomIconPath;
+  }
 
   window.setTimeout(function() {
     var marker = new google.maps.Marker({
       position: position,
       map: map,
       animation: google.maps.Animation.DROP,
-      icon: yoshiIconPath
+      icon: iconPath
     })
+
+
     markers.push(marker);
     var adjusted_scraped_date
     if (battle.scraped_date < 0) {
