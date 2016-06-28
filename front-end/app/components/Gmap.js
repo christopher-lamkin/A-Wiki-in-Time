@@ -195,9 +195,9 @@ var Gmap = React.createClass({
     )
   },
 
-  createMarker: function() {
+  createMarker: function(coordinates) {
     return new google.maps.Marker({
-      position: this.mapCenter(),
+      position: coordinates,
       map: this.map
     })
   },
@@ -209,6 +209,7 @@ var Gmap = React.createClass({
       draggable: true
     })
   },
+
   createInfoWindow: function(latlng) {
     this.state.mostRecentInfoWindow.close()
     var contentString = "Latitude: " + latlng.lat + "<br>Longitude: " + latlng.lng

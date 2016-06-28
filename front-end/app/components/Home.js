@@ -18,7 +18,15 @@ var Home = React.createClass({
       data: events
     })
   },
-  
+
+  componentDidUpdate() {
+    var that = this;
+    this.state.data.forEach(function(event) {
+      console.log('event', event);
+      that.refs.map.createMarker({lat: event.latitude, lng: event.longitude})
+    })
+  },
+
   componentWillMount() {
     if(google) {
       this.setState({isLoaded: true});
@@ -29,8 +37,8 @@ var Home = React.createClass({
     return this.state.isLoaded === false
     ? <div>loading...</div>
     : <div style={{width: '100%', height: '100%'}}>
-      <Gmap initialCenter={initialCenter} />
-      <SearchContainer onUpdate={this.handleUpdate.bind(this)}/>
+      <Gmap initialCenter={initialCenter} ref="map"/>
+      <SearchContainer onUpdate={this.handleUpdate}/>
       </div>
     }
   });
