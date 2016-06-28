@@ -193,11 +193,17 @@ var updateWindow = function (map, marker, latlng) {
   var infoWindow = new google.maps.InfoWindow({
     content: "Latitude: " + latlng.lat + "<br>Longitude: " + latlng.lng
   })
-  mostRecentInfoWindow = infoWindow;
+  // mostRecentInfoWindow = infoWindow;
   marker.addListener('click', function() {
     infoWindow.open(map, marker);
+    window.setTimeout(function () {
+      infoWindow.close();
+    }, 2000)
   })
   infoWindow.open(map, marker);
+  window.setTimeout(function () {
+    infoWindow.close();
+  }, 2000)
 }
 
 function handleLocationError(browserHasGeolocation, infoWindow, pos) {
@@ -223,7 +229,8 @@ function addMarkerWithTimeout(position, timeout, battle) {
     marker.addListener('click', function() {
       mostRecentInfoWindow.close();
       infoWindow.open(map, marker);
-      mostRecentInfoWindow = infoWindow;
+
+      // mostRecentInfoWindow = infoWindow;
     })
 
   }, timeout);
