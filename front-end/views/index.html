@@ -75,20 +75,17 @@
       Slide to Select Year
     </div>
     <div>
-    2000 BC <input type="range" name="date" id='date-slider' value='1861' min='-2000' max='2000' onchange="updateTextInput(this.value);"> 2000 AD
+      2000 BC <input type="range" name="date" id='date-slider' value='1861' min='-2000' max='2000' onchange="updateTextInput(this.value);"> 2000 AD
     </div>
   </div>
   <input id='lat-input' type='hidden' name='lat' value=''></input>
   <input id='long-input' type='hidden' name='long' value=''></input>
-  <div>
-    <label>POLYGON MODE </label>
-    <input type="radio" name="polygon" value="true" checked> TRUE
-    <input type="radio" name="polygon" value="false"> FALSE
-  </div>
+  <input id='polygon-input' type='hidden' name='polygon' value=''></input>
   <input id='submit-button' type="submit" name="Submit" value="Submit!">
 
+<button id='polygon-mode'>POLYGONMODE</button>
 </form>
 <div id='polygon-container'>
-<div>
-</body>
-</html>
+  <div>
+  </body>
+  </html>

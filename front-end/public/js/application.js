@@ -4,7 +4,7 @@ var map;
 var styleArray = [];
 var myLatLng = {lat: 32.866756, lng: -83.469486};
 var mostRecentInfoWindow;
-var bermudaQuad;
+var bermudaTriangle;
 var markers = [];
 var styleArray = [
 {
@@ -183,10 +183,9 @@ function initMap() {
   {lat: 25.774, lng: -80.190},
   {lat: 18.466, lng: -66.118},
   {lat: 32.321, lng: -64.757},
-  {lat: 40.000, lng: -66.000},
   {lat: 25.774, lng: -80.190}
   ]
-  bermudaQuad = new google.maps.Polygon({
+  bermudaTriangle = new google.maps.Polygon({
     paths: quadCoords,
     strokeColor: '#FF0000',
     strokeOpacity: 0.8,
@@ -197,7 +196,7 @@ function initMap() {
     geodesic: true,
     editable: true
   });
-  bermudaQuad.setMap(map);
+  bermudaTriangle.setMap(null);
   google.maps.event.addListener(marker, 'dragend', function (event) {
     var lat = event.latLng.lat();
     var long = event.latLng.lng();
@@ -349,6 +348,17 @@ function clearMarkers() {
 $(document).ready(function() {
 
 
+  $('#polygon-mode').on('click', function(event) {
+    var value = $('#polygon-input').val()
+    if (value == ''){
+      $('#polygon-input').val('true')
+      bermudaTriangle.setMap(map);
+    } else {
+      $('#polygon-input').val('')
+      bermudaTriangle.setMap(null);
+    }
+  })
+
   $('#wiki-header').hover(function() {
     $(this).addClass('magictime perspectiveUpRetourn')
     // setTimeout(function(){
@@ -360,91 +370,51 @@ $(document).ready(function() {
     $('#wiki-header').removeClass('magictime perspectiveUpRetourn')
   })
 
- //
- var easter_egg = new Konami();
- easter_egg.code = function() {
-  konami ? alert('Konami Code Deactivated!') : alert('Konami Code Activated! YOSHI MODE ENGAGED')
-  konami ? konami = false : konami = true
-}
-easter_egg.load();
+  var easter_egg = new Konami();
+  easter_egg.code = function() {
+    konami ? alert('Konami Code Deactivated!') : alert('Konami Code Activated! YOSHI MODE ENGAGED')
+    konami ? konami = false : konami = true
+  }
+  easter_egg.load();
 
-$('#polygon-test').on('click', function(event) {
+  $('#submit-button').on('click', function(event) {
 
-  event.preventDefault();
+    event.preventDefault();
+    var data = $('#input-data').serialize();
+    console.log(data);
+    $.ajax({
+      type: 'POST',
+      url: 'http://localhost:3000/query',
+      data: data
 
-  // var data = $('#input-data').serialize();
-  // console.log(data);
-  $.ajax({
-    type: 'POST',
-    url: 'http://localhost:3000/query',
-    data: data
+    }).done(function(response) {
+      if (!!response.error) {
+        console.log(response);
+      } else {
+        clearMarkers();
+        if (response.polygon == true) {
+          events_array = response.events
+          for (i = 0; i < events_array.length; i++) {
+            var event = events_array[i]
+            var coordinates = {lat: event.latitude, lng: event.longitude}
 
-  }).done(function(response) {
-    if (!!response.error) {
-      console.log(response);
-    } else {
-      clearMarkers();
-      debugger;
-      if (response.polygon == true) {
-        debugger;
-        events_array = response.events
-        for (i = 0; i < events_array.length; i++) {
-          var event = events_array[i]
-          var coordinates = {lat: event.latitude, lng: event.longitude}
-          if (google.maps.geometry.poly.containsLocation(coordinates, bermudaQuad) == true) {
-            newAddMarkerWithTimeout(coordinates, 200, event)
+            var g_coordinates = new google.maps.LatLng(event.latitude, event.longitude)
+            if (google.maps.geometry.poly.containsLocation(g_coordinates, bermudaTriangle) == true) {
+              newAddMarkerWithTimeout(coordinates, 200, event)
+            }
+          }
+        } else {
+          events_array = response.events
+          for (i = 0; i < events_array.length; i++) {
+            var event = events_array[i]
+            var coordinates = {lat: event.latitude, lng: event.longitude}
+            newAddMarkerWithTimeout(coordinates, i*(4000/events_array.length), event)
+
           }
         }
-      } else {
-        events_array = response.events
-        for (i = 0; i < events_array.length; i++) {
-          debugger;
-          var event = events_array[i]
-          var coordinates = {lat: event.latitude, lng: event.longitude}
-          newAddMarkerWithTimeout(coordinates, i*(4000/events_array.length), event)
-
-        }
       }
-    }
+    })
   })
-})
-$('#submit-button').on('click', function(event) {
-
-  event.preventDefault();
-  var data = $('#input-data').serialize();
-  console.log(data);
-  $.ajax({
-    type: 'POST',
-    url: 'http://localhost:3000/query',
-    data: data
-
-  }).done(function(response) {
-    if (!!response.error) {
-      console.log(response);
-    } else {
-      clearMarkers();
-      if (response.polygon == true) {
-        events_array = response.events
-        for (i = 0; i < events_array.length; i++) {
-          var event = events_array[i]
-          var coordinates = {lat: event.latitude, lng: event.longitude}
-          console.log(bermudaQuad)
-          if (google.maps.geometry.poly.containsLocation(coordinates, bermudaQuad) == true) {
-            newAddMarkerWithTimeout(coordinates, 200, event)
-          }
-        }
-      } else {
-        events_array = response.events
-        for (i = 0; i < events_array.length; i++) {
-          var event = events_array[i]
-          var coordinates = {lat: event.latitude, lng: event.longitude}
-          newAddMarkerWithTimeout(coordinates, i*(4000/events_array.length), event)
-
-        }
-      }
-    }
-  })
-})
 })
 
 
