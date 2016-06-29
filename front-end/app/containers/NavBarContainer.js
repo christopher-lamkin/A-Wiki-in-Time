@@ -16,13 +16,15 @@ var NavBarContainer = React.createClass({
   render(){
     return(
       <nav className="navbar">
-        <div id='header' className="nav">
-          <div className="container">
+        {/*<div className="container">*/}
+          <div id='header' className="col-center">
             <span className='header-div'><a href='/'>A </a></span>
             <span className='header-div' id='wiki-header'><a href='/'>WiKi</a></span>
             <span className='header-div'><a href='/'>in </a></span>
             <span className='header-div'><a href='/'>Time</a></span>
-          </div>
+            <button id="login" className='btn btn-warning-outline btn-lg' type='button'> Login </button>
+            <button id="register" className='btn btn-danger btn-lg' type='button'> Register </button>
+          {/*</div>*/}
         </div>
       </nav>
     )

@@ -26,7 +26,7 @@ if (!props.hasQueried) {
             </div>
             <div className="form-group col-sm-4 col-sm-offset-4">
               <input
-                className="btn btn-block btn-success"
+                className="btn btn-block btn-success btn-lg"
                 type="submit" value="Submit" />
             </div>
           </form>

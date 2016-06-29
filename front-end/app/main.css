@@ -48,21 +48,36 @@ body {
   width: 90%
 }
 
-#header {
+#header{
   height: 5%;
   text-align: center;
   font-family: 'UnifrakturCook', serif;
-  margin-bottom: 2%;
-  margin-top: 3%;
+  margin: 0px auto;
   /*transition: 0.3s ease;*/
-
 }
 
+#container > div > span > button {
+  display: inline-block;
+}
+
+#login {
+  margin-top: 15px;
+  float: right;
+  background-color: #C6DABF;
+  font-size: 2em;
+}
+
+#register{
+  float: right;
+  margin-top: 15px;
+  margin-right: 10px;
+  font-size: 2em; 
+}
 .header-div {
   display: inline-block;
   transition: 0.3s ease;
   font-size: 4em;
-  margin-left: 15px; 
+  margin-left: 15px;
 }
 
 .header-div a {
