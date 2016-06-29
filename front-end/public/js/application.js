@@ -1,3 +1,5 @@
+var konami = false;
+
 var map;
 var styleArray = [];
 var myLatLng = {lat: 32.866756, lng: -83.469486};
@@ -119,6 +121,7 @@ var styleArray = [
   ]
 }
 ]
+
 var updateTextInput = function (val) {
   $('#textInput').empty();
   if (val >= 0) {
@@ -240,12 +243,33 @@ function addMarkerWithTimeout(position, timeout, battle) {
   }, timeout);
 }
 function newAddMarkerWithTimeout(position, timeout, battle) {
+  var colors = ['blue', 'brown', 'darkgreen', 'green', 'orange', 'paleblue', 'pink', 'purple', 'red', 'yellow']
+  var letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+
+  var iconString = colors[Math.floor ( Math.random() * colors.length )] + '_Marker' + letters[Math.floor ( Math.random() * letters.length )] + '.png'
+  var randomIconPath = '/../front-end/public/images/google_maps_markers/' + iconString
+  var yoshiIconPath = '/../front-end/public/images/small_yoshis.png'
+  var iconPath;
+
+  if (battle.event_type == 'battle') {
+    iconPath = yoshiIconPath;
+  } else {
+    iconPath = randomIconPath;
+  }
+
+  if (konami == false) {
+    iconPath = randomIconPath
+  }
+
   window.setTimeout(function() {
     var marker = new google.maps.Marker({
       position: position,
       map: map,
-      animation: google.maps.Animation.DROP
+      animation: google.maps.Animation.DROP,
+      icon: iconPath
     })
+
+
     markers.push(marker);
     var adjusted_scraped_date
     if (battle.scraped_date < 0) {
@@ -253,9 +277,14 @@ function newAddMarkerWithTimeout(position, timeout, battle) {
     } else {
       adjusted_scraped_date = battle.scraped_date
     }
-
+    var infoWindowContent;
+    if (battle.scraped_date) {
+      infoWindowContent = "<strong>Title:</strong> " + battle.title + "<br><strong>Description: </strong>" + battle.description + "<br><strong>Date:</strong> " + adjusted_scraped_date + "<br><strong>Wiki URL:</strong> <a href=" + battle.event_url + " target='_blank'> " + battle.event_url + "</a>"
+    } else {
+      infoWindowContent = "<strong>Title:</strong> " + battle.title + "<br><strong>Description: </strong>" + battle.description + "<br><strong>Wiki URL:</strong> <a href=" + battle.event_url + " target='_blank'> " + battle.event_url + "</a>"
+    }
     var infoWindow = new google.maps.InfoWindow({
-      content: "<strong>Title:</strong> " + battle.title + "<br><strong>Description: </strong>" + battle.description + "<br><strong>Date:</strong> " + adjusted_scraped_date + "<br><strong>Wiki URL:</strong> <a href=" + battle.event_url + " target='_blank'> " + battle.event_url + "</a>"
+      content: infoWindowContent
     })
     mostRecentInfoWindow = infoWindow;
     marker.addListener('click', function() {
@@ -309,6 +338,14 @@ $(document).ready(function() {
     $('#wiki-header').removeClass('magictime perspectiveUpRetourn')
   })
 
+ //
+  var easter_egg = new Konami();
+  easter_egg.code = function() {
+    alert('Konami Code!');
+    konami = true;
+  }
+  easter_egg.load();
+
   $('#submit-button').on('click', function(event) {
 
     event.preventDefault();
@@ -328,7 +365,7 @@ $(document).ready(function() {
         for (i = 0; i < events_array.length; i++) {
           var event = events_array[i]
           var coordinates = {lat: event.latitude, lng: event.longitude}
-          newAddMarkerWithTimeout(coordinates, i*400, event)
+          newAddMarkerWithTimeout(coordinates, i*(4000/events_array.length), event)
 
         }
         // var qids = response[0].qids

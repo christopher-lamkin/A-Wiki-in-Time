@@ -25,6 +25,7 @@ ActiveRecord::Schema.define(version: 20160626183833) do
     t.float    "latitude"
     t.float    "longitude"
     t.string   "event_url"
+    t.string   "event_type"
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
   end
@@ -46,6 +47,7 @@ ActiveRecord::Schema.define(version: 20160626183833) do
   create_table "queries_events", force: :cascade do |t|
     t.integer  "query_id"
     t.integer  "event_id"
+    t.boolean  "is_starred"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

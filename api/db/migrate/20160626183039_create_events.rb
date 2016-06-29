@@ -11,6 +11,7 @@ class CreateEvents < ActiveRecord::Migration[5.0]
       t.float :latitude
       t.float :longitude
       t.string :event_url
+      t.string :event_type
 
       t.timestamps
     end
