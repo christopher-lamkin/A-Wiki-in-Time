@@ -20,8 +20,8 @@
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
 
-  <script src="/front-end/public/js/application.js"></script>
-  <script src="/front-end/public/js/konami.js"></script>
+  <script src="../public/js/application.js"></script>
+  <script src="../public/js/konami.js"></script>
 
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCj9yUP6BgnHAX-qFkkEQDmgce9hB_vpuo&callback=initMap"
   async defer></script>
@@ -51,6 +51,7 @@
       <option value='archaeological_sites'>Archaeological Sites</option>
       <option value='assassinations'>Assassinations</option>
       <option value='natural_disasters'>Natural Disasters</option>
+      <option value='explorers'>Explorers</option>
 
     </select>
   </div>
@@ -79,9 +80,15 @@
   </div>
   <input id='lat-input' type='hidden' name='lat' value=''></input>
   <input id='long-input' type='hidden' name='long' value=''></input>
-
+  <div>
+    <label>POLYGON MODE </label>
+    <input type="radio" name="polygon" value="true" checked> TRUE
+    <input type="radio" name="polygon" value="false"> FALSE
+  </div>
   <input id='submit-button' type="submit" name="Submit" value="Submit!">
-</form>
 
+</form>
+<div id='polygon-container'>
+<div>
 </body>
 </html>

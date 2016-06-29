@@ -10,47 +10,62 @@ class QueryController < ApplicationController
 
         # start_year = params[:start_year].to_i
         # end_year = params[:end_year].to_i
+        if params[:polygon] == 'true'
+            type = params[:type]
+            @events = Event.where(event_type: 'battle').where.not(latitude: nil)
 
-        start_year = params[:date].to_i - params[:year_range].to_i
-        end_year = params[:date].to_i + params[:year_range].to_i
-
-
-        radius = params[:radius].to_i
-        lat = params[:lat].to_f
-        long = params[:long].to_f
-        type = params[:type]
-        radians = lat/180*Math::PI
-        lat_shift = radius/LATITUDE_CONVERTER
-        long_shift = radius/(LONGITUDE_CONVERTER*Math.cos(radians))
-        lower_lat = lat - lat_shift
-        upper_lat = lat + lat_shift
-        lower_lng = long - long_shift
-        upper_lng = long + long_shift
-
-        @query = Query.create(latitude: lat, longitude: long, radius: radius, start_date: start_year, end_date: end_year, event_type: type)
-
-        if type == 'battles'
-            @events = Event.where(scraped_date: start_year..end_year).where(latitude: lower_lat..upper_lat).where(longitude: lower_lng..upper_lng).where(event_type: ['battle', 'siege'])
-        elsif type == 'archaeological_sites'
-            @events = Event.where(latitude: lower_lat..upper_lat).where(longitude: lower_lng..upper_lng).where(event_type: 'archaeological site')
-        elsif type == 'assassinations'
-            @events = Event.where(latitude: lower_lat..upper_lat).where(longitude: lower_lng..upper_lng).where(event_type: 'assassination')
-        elsif type == 'natural_disasters'
-            @events = Event.where(point_in_time: DateTime.new(start_year)..DateTime.new(end_year)).where(latitude: lower_lat..upper_lat).where(longitude: lower_lng..upper_lng).where(event_type: ['earthquake', 'volcano', 'tornado'])
-        else
-            @events = Event.where(latitude: lower_lat..upper_lat).where(longitude: lower_lng..upper_lng)
-        end
-
-        if @events
-            @events.each do |event|
-                @queries_event = QueriesEvent.create(query_id: @query.id, event_id: event.id)
+            if @events
+                # @events.each do |event|
+                #     @queries_event = QueriesEvent.create(query_id: @query.id, event_id: event.id)
+                # end
+                response = {events: @events, polygon: true}
+            else
+                response = {error: "No events found"}
             end
-            response = {events: @events}
+            render json: response
         else
-            response = {error: "No events found"}
-        end
-        render json: response
+            start_year = params[:date].to_i - params[:year_range].to_i
+            end_year = params[:date].to_i + params[:year_range].to_i
 
+
+            radius = params[:radius].to_i
+            lat = params[:lat].to_f
+            long = params[:long].to_f
+            type = params[:type]
+            radians = lat/180*Math::PI
+            lat_shift = radius/LATITUDE_CONVERTER
+            long_shift = radius/(LONGITUDE_CONVERTER*Math.cos(radians))
+            lower_lat = lat - lat_shift
+            upper_lat = lat + lat_shift
+            lower_lng = long - long_shift
+            upper_lng = long + long_shift
+
+            @query = Query.create(latitude: lat, longitude: long, radius: radius, start_date: start_year, end_date: end_year, event_type: type)
+
+            if type == 'battles'
+                @events = Event.where(scraped_date: start_year..end_year).where(latitude: lower_lat..upper_lat).where(longitude: lower_lng..upper_lng).where(event_type: ['battle', 'siege'])
+            elsif type == 'archaeological_sites'
+                @events = Event.where(latitude: lower_lat..upper_lat).where(longitude: lower_lng..upper_lng).where(event_type: 'archaeological site')
+            elsif type == 'assassinations'
+                @events = Event.where(latitude: lower_lat..upper_lat).where(longitude: lower_lng..upper_lng).where(event_type: 'assassination')
+            elsif type == 'natural_disasters'
+                @events = Event.where(point_in_time: DateTime.new(start_year)..DateTime.new(end_year)).where(latitude: lower_lat..upper_lat).where(longitude: lower_lng..upper_lng).where(event_type: ['earthquake', 'volcano', 'tornado'])
+            elsif type == 'explorers'
+                @events = Event.where(latitude: lower_lat..upper_lat).where(longitude: lower_lng..upper_lng).where(event_type: 'explorer')
+            else
+                @events = Event.where(latitude: lower_lat..upper_lat).where(longitude: lower_lng..upper_lng)
+            end
+
+            if @events
+                @events.each do |event|
+                    @queries_event = QueriesEvent.create(query_id: @query.id, event_id: event.id)
+                end
+                response = {events: @events}
+            else
+                response = {error: "No events found"}
+            end
+            render json: response
+        end
     end
 
     private
