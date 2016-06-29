@@ -35,6 +35,7 @@ var SearchContainer = React.createClass({
         }
         that.props.onUpdate(events)
         that.setState({hasQueried: true})
+        that.setState({queryResults: events})
       }
     }).catch(function(err) {
       console.log('fail', err)
@@ -49,11 +50,17 @@ var SearchContainer = React.createClass({
 
   },
 
+  queryAgain() {
+    this.setState({hasQueried: false})
+  },
+
 
   render(){
     return (
       <SubmitForm
         onFormSubmit={this.handleSubmit}
+        queryAgain={this.queryAgain}
+        queryResults={this.state.queryResults}
         hasQueried={this.state.hasQueried} />
     )
   }
