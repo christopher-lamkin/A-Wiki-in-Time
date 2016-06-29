@@ -6,7 +6,7 @@ require 'httparty'
 # Event.delete_all
 # QueriesEvent.delete_all
 # Event.where(event_type: 'assassination').destroy_all
-Event.where(event_type: 'explorer').destroy_all
+# Event.where(event_type: 'explorer').destroy_all
 
 dates = []
 def create_qIDS(id_array)

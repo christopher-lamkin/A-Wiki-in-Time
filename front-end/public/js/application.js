@@ -282,32 +282,31 @@ function newAddMarkerWithTimeout(position, timeout, battle) {
     iconPath = randomIconPath
   }
 
-  iconPath = '../public/images/custom-markers/awikiintime-0'
+  iconPath = '../public/images/event-markers/event-marker-'
 
   switch (battle.event_type) {
     case "battle":
-      iconPath += '2.png';
-      break;
+    iconPath += '1.png';
+    break;
     case "archaeological site":
-      iconPath += '7.png';
-      break;
+    iconPath += '6.png';
+    break;
     case "explorer":
-      iconPath += '5.png';
-      break;
+    iconPath += '4.png';
+    break;
     case "earthquake":
     case "tornado":
     case "volcano":
-      iconPath += '6.png';
-      break;
+    iconPath += '5.png';
+    break;
     case "assassination":
-      iconPath += '3.png';
-      break;
+    iconPath += '2.png';
+    break;
     case "siege":
-      iconPath += '4.png';
-      break;
+    iconPath += '3.png';
+    break;
     default:
-      console.log(iconPath)
-      iconPath = randomIconPath;
+    iconPath = randomIconPath;
   }
 
 
@@ -382,9 +381,11 @@ $(document).ready(function() {
     if (value == ''){
       $('#polygon-input').val('true')
       bermudaTriangle.setMap(map);
+      $('#polygon-mode').addClass('red')
     } else {
       $('#polygon-input').val('')
       bermudaTriangle.setMap(null);
+      $('#polygon-mode').removeClass('red')
     }
   })
 
@@ -407,10 +408,16 @@ $(document).ready(function() {
   easter_egg.load();
 
   $('#submit-button').on('click', function(event) {
+    var value = $('#polygon-input').val()
 
     event.preventDefault();
     var data = $('#input-data').serialize();
     console.log(data);
+    if (value == 'true') {
+      $('#polygon-input').val('')
+      bermudaTriangle.setMap(null);
+      $('#polygon-mode').removeClass('red')
+    }
     $.ajax({
       type: 'POST',
       url: 'http://localhost:3000/query',
