@@ -23,7 +23,10 @@ module.exports = {
           'file?hash=sha512&digest=hex&name=[hash].[ext]',
           'image-webpack'
         ]
-      }
+      },
+      { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loaders: [
+        'file?name=/fonts/endor/[name].[ext]', 
+        "file-loader"  ]  }
     ]
   },
   plugins: [HTMLWebpackPluginConfig]

@@ -1,12 +1,13 @@
 var React = require('react');
 var ReactCSSTransitionGroup = require('react-addons-css-transition-group');
 require('../main.css');
+var NavBarContainer = require('../containers/NavBarContainer');
 
 var Main = React.createClass({
   render() {
     return (
       <div className='main-container'>
-        <h1>Hello World</h1>
+        <NavBarContainer />
         <ReactCSSTransitionGroup
           transitionName="appear"
           transitionEnterTimeout={500}
