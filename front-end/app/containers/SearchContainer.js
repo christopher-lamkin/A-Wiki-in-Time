@@ -4,6 +4,12 @@ var axios = require('axios');
 var PropTypes = React.PropTypes;
 
 var SearchContainer = React.createClass({
+  getInitialState(){
+    return {
+      hasQueried: false
+    }
+  },
+
   handleSubmit: function(e) {
     e.preventDefault();
     var that = this;
@@ -37,7 +43,7 @@ var SearchContainer = React.createClass({
     router: React.PropTypes.object.isRequired
   },
 
-  componentWillMount() {
+  componentDidUpdate() {
 
   },
 

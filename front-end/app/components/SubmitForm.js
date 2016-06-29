@@ -6,12 +6,12 @@ var SliderRadius = require('../components/SliderRadius');
 var styles = require('../styles');
 var ReactDOM = require('react-dom');
 
-var SubmitForm = React.createClass({
- render() {
+function SubmitForm(props){
 
-  return(  <div className="jumbotron col-sm-6 col-sm-offset-3 text-center" style={styles.transparentBg}>
+  return(
+     <div className="jumbotron col-sm-6 col-sm-offset-3 text-center" style={styles.transparentBg}>
         <div className="col-sm-12" >
-          <form onSubmit={this.props.onFormSubmit}>
+          <form onSubmit={props.onFormSubmit}>
             <div className="form-group">
               <select className="form-control" name="type">
                 <option value="battles">Battles</option>
@@ -33,9 +33,8 @@ var SubmitForm = React.createClass({
         </div>
       </div>
     )
-  },
+  }
 
-});
 
 SubmitForm.propTypes = {
   onFormSubmit: PropTypes.func.isRequired
