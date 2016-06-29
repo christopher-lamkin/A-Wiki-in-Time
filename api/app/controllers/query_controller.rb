@@ -26,18 +26,18 @@ class QueryController < ApplicationController
         # end_year = params[:end_year].to_i
         if params[:polygon] == 'true'
             case type
-                when 'battles'
-                    @events = Event.where(scraped_date: start_year..end_year).where.not(latitude: nil).where(event_type: ['battle', 'siege']);
-                when 'archaeological_sites'
-                    @events = Event.where.not(latitude: nil).where(event_type: 'archaeological site');
-                when 'explorers'
-                    @events = Event.where.not(latitude: nil).where(event_type: 'explorer');
-                when 'natural_disasters'
-                    @events = Event.where.not(latitude: nil).where(point_in_time: DateTime.new(start_year)..DateTime.new(end_year)).where(event_type: ['earthquake', 'volcano', 'tornado']);
-                when 'assassinations'
-                    @events = Event.where.not(latitude: nil).where(event_type: 'assassination');
-                else
-                    @events = Event.where.not(latitude: nil);
+            when 'battles'
+                @events = Event.where(scraped_date: start_year..end_year).where.not(latitude: nil).where(event_type: ['battle', 'siege']);
+            when 'archaeological_sites'
+                @events = Event.where.not(latitude: nil).where(event_type: 'archaeological site');
+            when 'explorers'
+                @events = Event.where.not(latitude: nil).where(event_type: 'explorer');
+            when 'natural_disasters'
+                @events = Event.where.not(latitude: nil).where(point_in_time: DateTime.new(start_year)..DateTime.new(end_year)).where(event_type: ['earthquake', 'volcano', 'tornado']);
+            when 'assassinations'
+                @events = Event.where.not(latitude: nil).where(event_type: 'assassination');
+            else
+                @events = Event.where.not(latitude: nil);
             end
 
             if @events
@@ -50,8 +50,6 @@ class QueryController < ApplicationController
             end
             render json: response
         else
-
-
 
             @query = Query.create(latitude: lat, longitude: long, radius: radius, start_date: start_year, end_date: end_year, event_type: type)
 
@@ -81,6 +79,7 @@ class QueryController < ApplicationController
         end
     end
 
+
     private
 
     def create_qIDS(id_array)
@@ -89,29 +88,28 @@ class QueryController < ApplicationController
 
     def parse_response(entities)
         parsed_response = entities.map do |entity, value|
-            {entity => {
-                title: value.fetch('labels', {}).fetch('en', {}).fetch('value', "[No title found]"),
-                description: value.fetch('descriptions', {}).fetch('en', {}).fetch('value', "[No description found]"),
-                latitude: value['claims']['P625'][0]['mainsnak']['datavalue']['value']['latitude'],
-                longitude: value['claims']['P625'][0]['mainsnak']['datavalue']['value']['longitude'],
-                end_time: value['claims']['P582'][0]['mainsnak']['datavalue']['value']['time'],
-                link: value.fetch('sitelinks', {}).fetch('enwiki', {}).fetch('url', "[No URL found]")
-                }}
-            end
-            parsed_response
+          {entity => {
+            title: value.fetch('labels', {}).fetch('en', {}).fetch('value', "[No title found]"),
+            description: value.fetch('descriptions', {}).fetch('en', {}).fetch('value', "[No description found]"),
+            latitude: value['claims']['P625'][0]['mainsnak']['datavalue']['value']['latitude'],
+            longitude: value['claims']['P625'][0]['mainsnak']['datavalue']['value']['longitude'],
+            end_time: value['claims']['P582'][0]['mainsnak']['datavalue']['value']['time'],
+            link: value.fetch('sitelinks', {}).fetch('enwiki', {}).fetch('url', "[No URL found]")
+            }}
         end
+        parsed_response
+    end
 
-        def parse_archaeological_response(entities)
-            parsed_response = entities.map do |entity, value|
-                {entity => {
-                    title: value.fetch('labels', {}).fetch('en', {}).fetch('value', "[No title found]"),
-                    description: value.fetch('descriptions', {}).fetch('en', {}).fetch('value', "[No description found]"),
-                    latitude: value['claims']['P625'][0]['mainsnak']['datavalue']['value']['latitude'],
-                    longitude: value['claims']['P625'][0]['mainsnak']['datavalue']['value']['longitude'],
-                    link: value.fetch('sitelinks', {}).fetch('enwiki', {}).fetch('url', "[No URL found]")
-                    }}
-                end
-                parsed_response
-            end
-        end
-
+    def parse_archaeological_response(entities)
+      parsed_response = entities.map do |entity, value|
+        {entity => {
+          title: value.fetch('labels', {}).fetch('en', {}).fetch('value', "[No title found]"),
+          description: value.fetch('descriptions', {}).fetch('en', {}).fetch('value', "[No description found]"),
+          latitude: value['claims']['P625'][0]['mainsnak']['datavalue']['value']['latitude'],
+          longitude: value['claims']['P625'][0]['mainsnak']['datavalue']['value']['longitude'],
+          link: value.fetch('sitelinks', {}).fetch('enwiki', {}).fetch('url', "[No URL found]")
+          }}
+      end
+      parsed_response
+  end
+end

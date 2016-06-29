@@ -12,3 +12,129 @@
 .appear-leave {
   opacity: 0;
 }
+
+#app {
+  margin: 0;
+  padding: 0;
+  height: 65%;
+  width: 100%;
+}
+
+#GMap-canvas {
+  height: 100%;
+  width: 100%;
+  margin: 0px auto;
+}
+
+#GMap {
+  height: 70%;
+  width: 99%;
+  margin: 0px auto;
+
+}
+
+body, html, .main-container
+{
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  background: #F3E9D2;
+  background-image: url('./images/old-brown-parchment.png');
+  margin: 20px auto 0 auto;
+  width: 90%
+}
+
+#header{
+  height: 5%;
+  text-align: center;
+  font-family: 'UnifrakturCook', serif;
+  margin: 0px auto;
+  /*transition: 0.3s ease;*/
+}
+
+#container > div > span > button {
+  display: inline-block;
+}
+
+#login {
+  margin-top: 15px;
+  float: right;
+  background-color: #C6DABF;
+  font-size: 2em;
+}
+
+#register{
+  float: right;
+  margin-top: 15px;
+  margin-right: 10px;
+  font-size: 2em; 
+}
+.header-div {
+  display: inline-block;
+  transition: 0.3s ease;
+  font-size: 4em;
+  margin-left: 15px;
+}
+
+.header-div a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+#header:hover {
+  /*transform: scale(1.5, 1.5);*/
+
+}
+.header-div:hover {
+  transform: scale(1.5, 1.5);
+  color: goldenrod;
+
+}
+
+#date-slider {
+
+  width: 80%;
+  display: inline-block;
+  margin: 0 auto;
+}
+#input-data {
+
+  width: 60%;
+  margin: 0 auto;
+  text-align: center;
+
+  margin-top: 2%;
+  margin-bottom: 2%;
+}
+#textInput {
+
+  color: red;
+}
+
+.magictime {
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+}
+
+.perspectiveUpRetourn {
+  -webkit-backface-visibility: visible !important;
+  backface-visibility: visible !important;
+  -webkit-animation-name: perspectiveUpRetourn;
+  animation-name: perspectiveUpRetourn;
+}
+
+.card {
+  background: #F1F1F1;
+  padding: 3em;
+  padding-top: 1em;
+  margin-top: 1.5em;
+  margin-bottom: 1em;
+  border-radius: 1em 1em;
+  -webkit-border-radius: 1em 1em;
+}
