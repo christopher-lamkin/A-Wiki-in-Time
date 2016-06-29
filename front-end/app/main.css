@@ -40,9 +40,9 @@ body, html, .main-container
   height: 100%;
   width: 100%;
 }
+
 body {
-  padding-top: 125px;
-  background-color: #F3E9D2; 
+  background: #F3E9D2;
 }
 
 #header {

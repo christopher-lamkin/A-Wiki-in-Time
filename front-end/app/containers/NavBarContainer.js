@@ -15,12 +15,14 @@ var NavBarContainer = React.createClass({
 
   render(){
     return(
-      <nav className="navbar-nav navbar-fixed-top" style={{backgroundColor: "#F3E9D2"}}>
-        <div id='header'>
-          <div className='header-div'><a href='/'>A </a></div>
-          <div className='header-div' id='wiki-header'><a href='/'>WiKi</a></div>
-          <div className='header-div'><a href='/'>in </a></div>
-          <div className='header-div'><a href='/'>Time</a></div>
+      <nav className="navbar">
+        <div id='header' className="nav">
+          <div className="container">
+            <div className='header-div'><a href='/'>A </a></div>
+            <div className='header-div' id='wiki-header'><a href='/'>WiKi</a></div>
+            <div className='header-div'><a href='/'>in </a></div>
+            <div className='header-div'><a href='/'>Time</a></div>
+          </div>
         </div>
       </nav>
     )
