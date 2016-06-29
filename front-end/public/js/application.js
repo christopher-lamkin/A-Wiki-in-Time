@@ -1,3 +1,5 @@
+var konami = false;
+
 var map;
 var styleArray = [];
 var myLatLng = {lat: 32.866756, lng: -83.469486};
@@ -255,6 +257,10 @@ function newAddMarkerWithTimeout(position, timeout, battle) {
     iconPath = randomIconPath;
   }
 
+  if (konami == false) {
+    iconPath = randomIconPath
+  }
+
   window.setTimeout(function() {
     var marker = new google.maps.Marker({
       position: position,
@@ -331,6 +337,14 @@ $(document).ready(function() {
   $('#map-container').hover(function() {
     $('#wiki-header').removeClass('magictime perspectiveUpRetourn')
   })
+
+ //
+  var easter_egg = new Konami();
+  easter_egg.code = function() {
+    alert('Konami Code!');
+    konami = true;
+  }
+  easter_egg.load();
 
   $('#submit-button').on('click', function(event) {
 

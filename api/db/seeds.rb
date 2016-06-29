@@ -31,7 +31,9 @@ require 'httparty'
 # Query.delete_all
 # Event.delete_all
 # QueriesEvent.delete_all
+Event.where(event_type: 'assassination').destroy_all
 
+dates = []
 def create_qIDS(id_array)
   id_array.map{|id| 'Q'+id.to_s}
 end
@@ -52,71 +54,47 @@ def parse_response(entities)
   end
 
   mechanize = Mechanize.new
-  sieges_data_url = 'https://wdq.wmflabs.org/api?q=CLAIM[31:188055]'
 
-  siege_response = HTTParty.get(sieges_data_url)
-  siege_qIDS = create_qIDS(siege_response['items'])
+  murders_data_url = 'https://wdq.wmflabs.org/api?q=CLAIM[31:132821]'
+  murder_response = HTTParty.get(murders_data_url)
+  murder_qIDS = create_qIDS(murder_response['items'])
 
-  siege_qIDS.each_slice(50) do |qid_array|
+  murder_qIDS.each_slice(50) do |qid_array|
     qIDString = qid_array.join("%7C")
-    sieges_media_url = "https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=#{qIDString}&props=labels%7Cdescriptions%7Cclaims%7Csitelinks%2Furls&languages=en&languag
+    murder_media_url = "https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=#{qIDString}&props=labels%7Cdescriptions%7Cclaims%7Csitelinks%2Furls&languages=en&languag
     efallback=1&sitefilter=&formatversion=2"
-    media_response = HTTParty.get(sieges_media_url)
+    media_response = HTTParty.get(murder_media_url)
     entities = media_response['entities']
     p parsed_response = parse_response(entities)
     parsed_response.each do |entity_hash|
       entity_hash.each do |qID, value|
-        @event = Event.new(qID: qID, title: value[:title], end_time: value[:end_time], latitude: value[:latitude], longitude: value[:longitude], event_url: value[:link], point_in_time: value[:point_in_time], event_type: 'siege' )
-        siege_url = value[:link]
+        @event = Event.new(qID: qID, title: value[:title], end_time: value[:end_time], latitude: value[:latitude], longitude: value[:longitude], event_url: value[:link], point_in_time: value[:point_in_time], event_type: 'assassination' )
+        murder_url = value[:link]
         begin
-          page = mechanize.get(siege_url)
-          description = page.at('#mw-content-text').xpath('./p').first.text
-          date_box = page.at('.infobox table td')
-          break if date_box.nil?
-          date = date_box.text.strip
-
-          parsed_date_array_array = date.scan(/(\d{1,4}\sAD|\d{1,4}\sBC)/)
-          unless parsed_date_array_array.empty?
-            parsed_date_array = parsed_date_array_array.last
-          end
-          if parsed_date_array
-            parsed_date = parsed_date_array.first
-          else
-            parsed_date = nil
-          end
-
-          if parsed_date.nil?
-            parsed_date = date.scan(/\d{3,4}/).last
-            parsed_date = parsed_date.to_i
-            @event.scraped_date = parsed_date
-            description = ''
-            if page.at('#mw-content-text')
-              if page.at('#mw-content-text').xpath('./p')
-                if page.at('#mw-content-text').xpath('./p').first
-                  description = page.at('#mw-content-text').xpath('./p').first.text
-                end
+          page = mechanize.get(murder_url)
+          description = ''
+          location = ''
+          if page.at('#mw-content-text')
+            if page.at('#mw-content-text').xpath('./p')
+              if page.at('#mw-content-text').xpath('./p').first
+                description = page.at('#mw-content-text').xpath('./p').first.text
               end
             end
-            @event.description = description
-            @event.save
-          else
-            if parsed_date[-2..-1] == 'BC'
-              parsed_date = (parsed_date[0...-3].to_i)*-1
-            else
-              parsed_date = parsed_date[0...-3]
-            end
-            @event.scraped_date = parsed_date
-            description = ''
-            if page.at('#mw-content-text')
-              if page.at('#mw-content-text').xpath('./p')
-                if page.at('#mw-content-text').xpath('./p').first
-                  description = page.at('#mw-content-text').xpath('./p').first.text
-                end
-              end
-            end
-            @event.description = description
-            @event.save
           end
+
+          if page.at('#mw-content-text p a')
+            location = page.at('#mw-content-text p a').text.strip
+          end
+
+          if location != ''
+            location_lat_lng = Geocoder.coordinates('location')
+            if @event.latitude.nil?
+              @event.latitude = location_lat_lng[0]
+              @event.longitude = location_lat_lng[1]
+            end
+          end
+          @event.description = description
+          @event.save
         rescue Mechanize::ResponseCodeError
           break
         end
@@ -124,14 +102,85 @@ def parse_response(entities)
     end
   end
 
+
+# # QUERY SEEDS FOR SIEGES
+
+# sieges_data_url = 'https://wdq.wmflabs.org/api?q=CLAIM[31:188055]'
+# siege_response = HTTParty.get(sieges_data_url)
+# siege_qIDS = create_qIDS(siege_response['items'])
+
+# siege_qIDS.each_slice(50) do |qid_array|
+#   qIDString = qid_array.join("%7C")
+#   sieges_media_url = "https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=#{qIDString}&props=labels%7Cdescriptions%7Cclaims%7Csitelinks%2Furls&languages=en&languag
+#   efallback=1&sitefilter=&formatversion=2"
+#   media_response = HTTParty.get(sieges_media_url)
+#   entities = media_response['entities']
+#   p parsed_response = parse_response(entities)
+#   parsed_response.each do |entity_hash|
+#     entity_hash.each do |qID, value|
+#       @event = Event.new(qID: qID, title: value[:title], end_time: value[:end_time], latitude: value[:latitude], longitude: value[:longitude], event_url: value[:link], point_in_time: value[:point_in_time], event_type: 'siege' )
+#       siege_url = value[:link]
+#       begin
+#         page = mechanize.get(siege_url)
+#         description = page.at('#mw-content-text').xpath('./p').first.text
+#         date_box = page.at('.infobox table td')
+#         break if date_box.nil?
+#         date = date_box.text.strip
+
+#         parsed_date_array_array = date.scan(/(\d{1,4}\sAD|\d{1,4}\sBC)/)
+#         unless parsed_date_array_array.empty?
+#           parsed_date_array = parsed_date_array_array.last
+#         end
+#         if parsed_date_array
+#           parsed_date = parsed_date_array.first
+#         else
+#           parsed_date = nil
+#         end
+
+#         if parsed_date.nil?
+#           parsed_date = date.scan(/\d{3,4}/).last
+#           parsed_date = parsed_date.to_i
+#           @event.scraped_date = parsed_date
+#           description = ''
+#           if page.at('#mw-content-text')
+#             if page.at('#mw-content-text').xpath('./p')
+#               if page.at('#mw-content-text').xpath('./p').first
+#                 description = page.at('#mw-content-text').xpath('./p').first.text
+#               end
+#             end
+#           end
+#           @event.description = description
+#           @event.save
+#         else
+#           if parsed_date[-2..-1] == 'BC'
+#             parsed_date = (parsed_date[0...-3].to_i)*-1
+#           else
+#             parsed_date = parsed_date[0...-3]
+#           end
+#           @event.scraped_date = parsed_date
+#           description = ''
+#           if page.at('#mw-content-text')
+#             if page.at('#mw-content-text').xpath('./p')
+#               if page.at('#mw-content-text').xpath('./p').first
+#                 description = page.at('#mw-content-text').xpath('./p').first.text
+#               end
+#             end
+#           end
+#           @event.description = description
+#           @event.save
+#         end
+#       rescue Mechanize::ResponseCodeError
+#         break
+#       end
+#     end
+#   end
+# end
+
+
+# # QUERY SEEDS FOR ARCHAEOLOGICAL SITES
+
   # archaeological_sites_data_url = 'https://wdq.wmflabs.org/api?q=CLAIM[31:839954]'
-  # battles_data_url = 'https://wdq.wmflabs.org/api?q=CLAIM[31:178561]'
   # archaeological_response = HTTParty.get(archaeological_sites_data_url)
-  # dates = []
-
-
-  # response = HTTParty.get(battles_data_url)
-  # qIDS = create_qIDS(response['items'])
   # arch_qIDS = create_qIDS(archaeological_response['items'])
 
   # # arch_qIDS = arch_qIDS[0..200]
@@ -170,6 +219,13 @@ def parse_response(entities)
   #   end
   # end
 
+
+
+# # QUERY SEEDS FOR BATTLES
+
+  # battles_data_url = 'https://wdq.wmflabs.org/api?q=CLAIM[31:178561]'
+  # battle_response = HTTParty.get(battles_data_url)
+  # qIDS = create_qIDS(battle_response['items'])
 
   # qIDS.each_slice(50) do |qid_array|
   #   qIDString = qid_array.join("%7C")

@@ -1,6 +1,6 @@
 class QueryController < ApplicationController
 
-    CATEGORIES_HASH = { 'battles' => 178561, 'archaeological_sites' => 839954, 'sieges' => 188055 }
+    CATEGORIES_HASH = { 'battles' => 178561, 'archaeological_sites' => 839954, 'sieges' => 188055, 'murders' => 132821 }
     LATITUDE_CONVERTER = 110.574
     LONGITUDE_CONVERTER = 111.320
     def create
@@ -31,52 +31,55 @@ class QueryController < ApplicationController
             @events = Event.where(scraped_date: start_year..end_year).where(latitude: lower_lat..upper_lat).where(longitude: lower_lng..upper_lng).where(event_type: ['battle', 'siege'])
         elsif type == 'archaeological_sites'
             @events = Event.where(latitude: lower_lat..upper_lat).where(longitude: lower_lng..upper_lng).where(event_type: 'archaeological site')
+        elsif type == 'assassinations'
+            @events = Event.where(latitude: lower_lat..upper_lat).where(longitude: lower_lng..upper_lng).where(event_type: 'assassination')
         else
-          @events = Event.where(latitude: lower_lat..upper_lat).where(longitude: lower_lng..upper_lng)
-      end
-      if @events
-        @events.each do |event|
-            @queries_event = QueriesEvent.create(query_id: @query.id, event_id: event.id)
+            @events = Event.where(latitude: lower_lat..upper_lat).where(longitude: lower_lng..upper_lng)
         end
-        response = {events: @events}
-    else
-        response = {error: "No events found"}
-    end
-    render json: response
 
-end
-
-private
-
-def create_qIDS(id_array)
-    id_array.map{|id| 'Q'+id.to_s}
-end
-
-def parse_response(entities)
-    parsed_response = entities.map do |entity, value|
-        {entity => {
-            title: value.fetch('labels', {}).fetch('en', {}).fetch('value', "[No title found]"),
-            description: value.fetch('descriptions', {}).fetch('en', {}).fetch('value', "[No description found]"),
-            latitude: value['claims']['P625'][0]['mainsnak']['datavalue']['value']['latitude'],
-            longitude: value['claims']['P625'][0]['mainsnak']['datavalue']['value']['longitude'],
-            end_time: value['claims']['P582'][0]['mainsnak']['datavalue']['value']['time'],
-            link: value.fetch('sitelinks', {}).fetch('enwiki', {}).fetch('url', "[No URL found]")
-            }}
+        if @events
+            @events.each do |event|
+                @queries_event = QueriesEvent.create(query_id: @query.id, event_id: event.id)
+            end
+            response = {events: @events}
+        else
+            response = {error: "No events found"}
         end
-        parsed_response
+        render json: response
+
     end
 
-    def parse_archaeological_response(entities)
+    private
+
+    def create_qIDS(id_array)
+        id_array.map{|id| 'Q'+id.to_s}
+    end
+
+    def parse_response(entities)
         parsed_response = entities.map do |entity, value|
             {entity => {
                 title: value.fetch('labels', {}).fetch('en', {}).fetch('value', "[No title found]"),
                 description: value.fetch('descriptions', {}).fetch('en', {}).fetch('value', "[No description found]"),
                 latitude: value['claims']['P625'][0]['mainsnak']['datavalue']['value']['latitude'],
                 longitude: value['claims']['P625'][0]['mainsnak']['datavalue']['value']['longitude'],
+                end_time: value['claims']['P582'][0]['mainsnak']['datavalue']['value']['time'],
                 link: value.fetch('sitelinks', {}).fetch('enwiki', {}).fetch('url', "[No URL found]")
                 }}
             end
             parsed_response
         end
-    end
+
+        def parse_archaeological_response(entities)
+            parsed_response = entities.map do |entity, value|
+                {entity => {
+                    title: value.fetch('labels', {}).fetch('en', {}).fetch('value', "[No title found]"),
+                    description: value.fetch('descriptions', {}).fetch('en', {}).fetch('value', "[No description found]"),
+                    latitude: value['claims']['P625'][0]['mainsnak']['datavalue']['value']['latitude'],
+                    longitude: value['claims']['P625'][0]['mainsnak']['datavalue']['value']['longitude'],
+                    link: value.fetch('sitelinks', {}).fetch('enwiki', {}).fetch('url', "[No URL found]")
+                    }}
+                end
+                parsed_response
+            end
+        end
 
