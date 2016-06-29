@@ -2,6 +2,17 @@ var React = require('react');
 var styles = require('../styles');
 
 var NavBarContainer = React.createClass({
+  componentDidMount(){
+    console.log(this)
+      $('#wiki-header').hover(function() {
+        $(this).addClass('magictime perspectiveUpRetourn')
+      });
+
+      $('.GMap').hover(function() {
+        $('#wiki-header').removeClass('magictime perspectiveUpRetourn')
+      })
+  },
+
   render(){
     return(
       <div id='header'>

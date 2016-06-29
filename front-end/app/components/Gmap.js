@@ -150,9 +150,9 @@ var Gmap = React.createClass({
     }
     return (
       <div className="GMap" style={gMapStyles}>
-        <div className='UpdatedText'>
+        {/*<div className='UpdatedText'>
           <p>Current Zoom: { this.state.zoom }</p>
-        </div>
+        </div>*/}
         <div className='GMap-canvas' ref="mapCanvas" style={gMapCanvasStyles}>
           Loading map ...
         </div>
