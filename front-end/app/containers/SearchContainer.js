@@ -6,7 +6,8 @@ var PropTypes = React.PropTypes;
 var SearchContainer = React.createClass({
   getInitialState(){
     return {
-      hasQueried: false
+      hasQueried: false,
+      queryResults: [],
     }
   },
 
@@ -33,6 +34,7 @@ var SearchContainer = React.createClass({
           // }
         }
         that.props.onUpdate(events)
+        that.setState({hasQueried: true})
       }
     }).catch(function(err) {
       console.log('fail', err)
@@ -51,7 +53,8 @@ var SearchContainer = React.createClass({
   render(){
     return (
       <SubmitForm
-        onFormSubmit={this.handleSubmit}/>
+        onFormSubmit={this.handleSubmit}
+        hasQueried={this.state.hasQueried} />
     )
   }
 });

@@ -7,7 +7,7 @@ var styles = require('../styles');
 var ReactDOM = require('react-dom');
 
 function SubmitForm(props){
-
+if (!props.hasQueried) {
   return(
      <div className="jumbotron col-sm-6 col-sm-offset-3 text-center" style={styles.transparentBg}>
         <div className="col-sm-12" >
@@ -34,10 +34,13 @@ function SubmitForm(props){
       </div>
     )
   }
+  return ( <div>Loading</div>)
+  }
 
 
 SubmitForm.propTypes = {
-  onFormSubmit: PropTypes.func.isRequired
+  onFormSubmit: PropTypes.func.isRequired,
+  hasQueried: PropTypes.bool.isRequired
 }
 
 module.exports = SubmitForm;
