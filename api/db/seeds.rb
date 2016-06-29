@@ -1,29 +1,3 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rails db:seed command (or created alongside the database with db:setup).
-#
-# Examples:
-#
-#   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
-#   Character.create(name: 'Luke', movie: movies.first)
-
-
-# User.create(
-#   username: "tim", email: "tim@tim.com", password: "1234"
-# )
-
-
-# Query.create(
-#   user_id: 1, query_url: Faker::Internet.url, latitude: 34.475854558497, longitude: -83.7331578750001, radius: 300, start_date: 1845, end_date: 1885, event_type: "battles", notes: ""
-# )
-
-# Query.create(
-#   user_id: 1, query_url: Faker::Internet.url, latitude: 52.0701159653907, longitude: -0.412845374999961, radius: 300, start_date: 930, end_date: 1130, event_type: "battles", notes: ""
-# )
-
-# Query.create(
-#   user_id: 1, query_url: Faker::Internet.url, latitude: 35.627024086052, longitude: 9.47484993749993, radius: 300, start_date: 431, end_date: 631, event_type: "battles", notes: ""
-#   )
-
 require 'mechanize'
 require 'httparty'
 
@@ -53,42 +27,46 @@ def parse_response(entities)
     parsed_response
   end
 
+  mechanize = Mechanize.new
+
+
+
+
 
   # # QUERY SEEDS FOR VOLCANOES
-  mechanize = Mechanize.new
-  volcanoes_data_url = 'https://wdq.wmflabs.org/api?q=CLAIM[31:7692360]'
-  volcano_response = HTTParty.get(volcanoes_data_url)
-  volcano_qIDS = create_qIDS(volcano_response['items'])
+  # volcanoes_data_url = 'https://wdq.wmflabs.org/api?q=CLAIM[31:7692360]'
+  # volcano_response = HTTParty.get(volcanoes_data_url)
+  # volcano_qIDS = create_qIDS(volcano_response['items'])
 
-  volcano_qIDS.each_slice(50) do |qid_array|
-    qIDString = qid_array.join("%7C")
-    volcano_media_url = "https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=#{qIDString}&props=labels%7Cdescriptions%7Cclaims%7Csitelinks%2Furls&languages=en&languag
-    efallback=1&sitefilter=&formatversion=2"
-    media_response = HTTParty.get(volcano_media_url)
-    entities = media_response['entities']
-    p parsed_response = parse_response(entities)
-    parsed_response.each do |entity_hash|
-      entity_hash.each do |qID, value|
-        @event = Event.new(qID: qID, title: value[:title], end_time: value[:end_time], latitude: value[:latitude], longitude: value[:longitude], event_url: value[:link], point_in_time: value[:point_in_time], event_type: 'volcano' )
-        volcano_url = value[:link]
-        begin
-          page = mechanize.get(volcano_url)
-          description = ''
-          if page.at('#mw-content-text')
-            if page.at('#mw-content-text').xpath('./p')
-              if page.at('#mw-content-text').xpath('./p').first
-                description = page.at('#mw-content-text').xpath('./p').first.text
-              end
-            end
-          end
-          @event.description = description
-          @event.save
-        rescue Mechanize::ResponseCodeError
-          break
-        end
-      end
-    end
-  end
+  # volcano_qIDS.each_slice(50) do |qid_array|
+  #   qIDString = qid_array.join("%7C")
+  #   volcano_media_url = "https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=#{qIDString}&props=labels%7Cdescriptions%7Cclaims%7Csitelinks%2Furls&languages=en&languag
+  #   efallback=1&sitefilter=&formatversion=2"
+  #   media_response = HTTParty.get(volcano_media_url)
+  #   entities = media_response['entities']
+  #   p parsed_response = parse_response(entities)
+  #   parsed_response.each do |entity_hash|
+  #     entity_hash.each do |qID, value|
+  #       @event = Event.new(qID: qID, title: value[:title], end_time: value[:end_time], latitude: value[:latitude], longitude: value[:longitude], event_url: value[:link], point_in_time: value[:point_in_time], event_type: 'volcano' )
+  #       volcano_url = value[:link]
+  #       begin
+  #         page = mechanize.get(volcano_url)
+  #         description = ''
+  #         if page.at('#mw-content-text')
+  #           if page.at('#mw-content-text').xpath('./p')
+  #             if page.at('#mw-content-text').xpath('./p').first
+  #               description = page.at('#mw-content-text').xpath('./p').first.text
+  #             end
+  #           end
+  #         end
+  #         @event.description = description
+  #         @event.save
+  #       rescue Mechanize::ResponseCodeError
+  #         break
+  #       end
+  #     end
+  #   end
+  # end
 
 
   # # QUERY SEEDS FOR EARTHQUAKES
