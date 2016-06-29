@@ -8,11 +8,37 @@ class QueryController < ApplicationController
     def create
         p params.inspect
 
+        radius = params[:radius].to_i
+        lat = params[:lat].to_f
+        long = params[:long].to_f
+        type = params[:type]
+        radians = lat/180*Math::PI
+        lat_shift = radius/LATITUDE_CONVERTER
+        long_shift = radius/(LONGITUDE_CONVERTER*Math.cos(radians))
+        lower_lat = lat - lat_shift
+        upper_lat = lat + lat_shift
+        lower_lng = long - long_shift
+        upper_lng = long + long_shift
+        start_year = params[:date].to_i - params[:year_range].to_i
+        end_year = params[:date].to_i + params[:year_range].to_i
+
         # start_year = params[:start_year].to_i
         # end_year = params[:end_year].to_i
         if params[:polygon] == 'true'
-            type = params[:type]
-            @events = Event.where(event_type: 'battle').where.not(latitude: nil)
+            case type
+                when 'battles'
+                    @events = Event.where(scraped_date: start_year..end_year).where.not(latitude: nil).where(event_type: ['battle', 'siege']);
+                when 'archaeological_sites'
+                    @events = Event.where.not(latitude: nil).where(event_type: 'archaeological site');
+                when 'explorers'
+                    @events = Event.where.not(latitude: nil).where(event_type: 'explorer');
+                when 'natural_disasters'
+                    @events = Event.where.not(latitude: nil).where(point_in_time: DateTime.new(start_year)..DateTime.new(end_year)).where(event_type: ['earthquake', 'volcano', 'tornado']);
+                when 'assassinations'
+                    @events = Event.where.not(latitude: nil).where(event_type: 'assassination');
+                else
+                    @events = Event.where.not(latitude: nil);
+            end
 
             if @events
                 # @events.each do |event|
@@ -24,21 +50,8 @@ class QueryController < ApplicationController
             end
             render json: response
         else
-            start_year = params[:date].to_i - params[:year_range].to_i
-            end_year = params[:date].to_i + params[:year_range].to_i
 
 
-            radius = params[:radius].to_i
-            lat = params[:lat].to_f
-            long = params[:long].to_f
-            type = params[:type]
-            radians = lat/180*Math::PI
-            lat_shift = radius/LATITUDE_CONVERTER
-            long_shift = radius/(LONGITUDE_CONVERTER*Math.cos(radians))
-            lower_lat = lat - lat_shift
-            upper_lat = lat + lat_shift
-            lower_lng = long - long_shift
-            upper_lng = long + long_shift
 
             @query = Query.create(latitude: lat, longitude: long, radius: radius, start_date: start_year, end_date: end_year, event_type: type)
 

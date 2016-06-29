@@ -282,6 +282,35 @@ function newAddMarkerWithTimeout(position, timeout, battle) {
     iconPath = randomIconPath
   }
 
+  iconPath = '../public/images/custom-markers/awikiintime-0'
+
+  switch (battle.event_type) {
+    case "battle":
+      iconPath += '2.png';
+      break;
+    case "archaeological site":
+      iconPath += '7.png';
+      break;
+    case "explorer":
+      iconPath += '5.png';
+      break;
+    case "earthquake":
+    case "tornado":
+    case "volcano":
+      iconPath += '6.png';
+      break;
+    case "assassination":
+      iconPath += '3.png';
+      break;
+    case "siege":
+      iconPath += '4.png';
+      break;
+    default:
+      console.log(iconPath)
+      iconPath = randomIconPath;
+  }
+
+
   window.setTimeout(function() {
     var marker = new google.maps.Marker({
       position: position,
