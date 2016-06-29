@@ -2,7 +2,10 @@
   font-family: endor;
   src: url("../fonts/endor/ENDOR.ttf");
 }
-
+.red {
+  background-color: red;
+  color: goldenrod;
+}
 #map {
   height: 100%;
   width: 100%;

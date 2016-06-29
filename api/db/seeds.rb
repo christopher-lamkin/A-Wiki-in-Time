@@ -6,6 +6,7 @@ require 'httparty'
 # Event.delete_all
 # QueriesEvent.delete_all
 # Event.where(event_type: 'assassination').destroy_all
+# Event.where(event_type: 'explorer').destroy_all
 
 dates = []
 def create_qIDS(id_array)
@@ -20,6 +21,7 @@ def parse_response(entities)
       latitude: value.fetch('claims', {}).fetch('P625', [{}]).fetch(0).fetch('mainsnak', {}).fetch('datavalue', {}).fetch('value', {}).fetch('latitude', nil),
       longitude: value.fetch('claims', {}).fetch('P625', [{}]).fetch(0).fetch('mainsnak', {}).fetch('datavalue', {}).fetch('value', {}).fetch('longitude', nil),
       end_time: value.fetch('claims', {}).fetch('P582', [{}]).fetch(0).fetch('mainsnak', {}).fetch('datavalue', {}).fetch('value', {}).fetch('time', nil),
+      death_date: value.fetch('claims', {}).fetch('P570', [{}]).fetch(0).fetch('mainsnak', {}).fetch('datavalue', {}).fetch('value', {}).fetch('time', nil),
       point_in_time: value.fetch('claims', {}).fetch('P585', [{}]).fetch(0).fetch('mainsnak', {}).fetch('datavalue', {}).fetch('value', {}).fetch('time', nil),
       link: value.fetch('sitelinks', {}).fetch('enwiki', {}).fetch('url', "[No URL found]")
       }}
@@ -31,6 +33,61 @@ def parse_response(entities)
 
 
 
+ # # QUERY SEEDS FOR EXPLORERS
+ explorers_data_url = 'https://wdq.wmflabs.org/api?q=CLAIM[106:11900058]'
+ explorer_response = HTTParty.get(explorers_data_url)
+ explorer_qIDS = create_qIDS(explorer_response['items'])
+
+ explorer_qIDS.each_slice(50) do |qid_array|
+  qIDString = qid_array.join("%7C")
+  explorer_media_url = "https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=#{qIDString}&props=labels%7Cdescriptions%7Cclaims%7Csitelinks%2Furls&languages=en&languag
+  efallback=1&sitefilter=&formatversion=2"
+  media_response = HTTParty.get(explorer_media_url)
+  entities = media_response['entities']
+  p parsed_response = parse_response(entities)
+  parsed_response.each do |entity_hash|
+    entity_hash.each do |qID, value|
+      @event = Event.new(qID: qID, title: value[:title], end_time: value[:death_date], latitude: value[:latitude], longitude: value[:longitude], event_url: value[:link], point_in_time: value[:point_in_time], event_type: 'explorer' )
+      explorer_url = value[:link]
+      begin
+        page = mechanize.get(explorer_url)
+        description = ''
+        if page.at('#mw-content-text')
+          if page.at('#mw-content-text').xpath('./p')
+            if page.at('#mw-content-text').xpath('./p').first
+              description = page.at('#mw-content-text').xpath('./p').first.text
+            end
+          end
+        end
+
+        death_place = ''
+
+        if page.at('th:contains("Died")')
+          if page.at('th:contains("Died")').parent
+            if page.at('th:contains("Died")').parent.at('a')
+              death_place = page.at('th:contains("Died")').parent.at('a').text.strip
+            end
+          end
+        end
+
+        if death_place != ''
+          location_lat_lng = Geocoder.coordinates(death_place)
+          if @event.latitude.nil?
+            if location_lat_lng
+              @event.latitude = location_lat_lng[0]
+              @event.longitude = location_lat_lng[1]
+            end
+          end
+        end
+
+        @event.description = description
+        @event.save
+      rescue Mechanize::ResponseCodeError
+        break
+      end
+    end
+  end
+end
 
 
   # # QUERY SEEDS FOR VOLCANOES
@@ -137,10 +194,12 @@ def parse_response(entities)
   #         end
 
   #         if location != ''
-  #           location_lat_lng = Geocoder.coordinates('location')
+  #           location_lat_lng = Geocoder.coordinates(location)
   #           if @event.latitude.nil?
-  #             @event.latitude = location_lat_lng[0]
-  #             @event.longitude = location_lat_lng[1]
+  #             if location_lat_lng
+  #               @event.latitude = location_lat_lng[0]
+  #               @event.longitude = location_lat_lng[1]
+  #             end
   #           end
   #         end
   #         @event.description = description

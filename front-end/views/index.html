@@ -20,8 +20,8 @@
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
 
-  <script src="/front-end/public/js/application.js"></script>
-  <script src="/front-end/public/js/konami.js"></script>
+  <script src="../public/js/application.js"></script>
+  <script src="../public/js/konami.js"></script>
 
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCj9yUP6BgnHAX-qFkkEQDmgce9hB_vpuo&callback=initMap"
   async defer></script>
@@ -51,6 +51,8 @@
       <option value='archaeological_sites'>Archaeological Sites</option>
       <option value='assassinations'>Assassinations</option>
       <option value='natural_disasters'>Natural Disasters</option>
+      <option value='explorers'>Explorers</option>
+      <option value='other'>Other</option>
 
     </select>
   </div>
@@ -74,14 +76,17 @@
       Slide to Select Year
     </div>
     <div>
-    2000 BC <input type="range" name="date" id='date-slider' value='1861' min='-2000' max='2000' onchange="updateTextInput(this.value);"> 2000 AD
+      2000 BC <input type="range" name="date" id='date-slider' value='1861' min='-2000' max='2000' onchange="updateTextInput(this.value);"> 2000 AD
     </div>
   </div>
   <input id='lat-input' type='hidden' name='lat' value=''></input>
   <input id='long-input' type='hidden' name='long' value=''></input>
-
+  <input id='polygon-input' type='hidden' name='polygon' value=''></input>
   <input id='submit-button' type="submit" name="Submit" value="Submit!">
-</form>
 
-</body>
-</html>
+<button id='polygon-mode'>POLYGONMODE</button>
+</form>
+<div id='polygon-container'>
+  <div>
+  </body>
+  </html>

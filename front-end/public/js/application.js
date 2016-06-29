@@ -4,6 +4,7 @@ var map;
 var styleArray = [];
 var myLatLng = {lat: 32.866756, lng: -83.469486};
 var mostRecentInfoWindow;
+var bermudaTriangle;
 var markers = [];
 var styleArray = [
 {
@@ -122,6 +123,7 @@ var styleArray = [
 }
 ]
 
+
 var updateTextInput = function (val) {
   $('#textInput').empty();
   if (val >= 0) {
@@ -164,7 +166,7 @@ function initMap() {
 
 
 
-  var image_path = '/../front-end/public/images/google_maps_markers/blue_MarkerA.png'
+  var image_path = '../public/images/google_maps_markers/blue_MarkerA.png'
   marker = new google.maps.Marker({
     // position: map.getCenter(),
     position: myLatLng,
@@ -177,6 +179,24 @@ function initMap() {
   $('#lat-input').val(myLatLng.lat);
   $('#long-input').val(myLatLng.lng);
 
+  var quadCoords = [
+  {lat: 25.774, lng: -80.190},
+  {lat: 18.466, lng: -66.118},
+  {lat: 32.321, lng: -64.757},
+  {lat: 25.774, lng: -80.190}
+  ]
+  bermudaTriangle = new google.maps.Polygon({
+    paths: quadCoords,
+    strokeColor: '#FF0000',
+    strokeOpacity: 0.8,
+    strokeWeight: 2,
+    fillColor: '#FF0000',
+    fillOpacity: 0.35,
+    draggable: true,
+    geodesic: true,
+    editable: true
+  });
+  bermudaTriangle.setMap(null);
   google.maps.event.addListener(marker, 'dragend', function (event) {
     var lat = event.latLng.lat();
     var long = event.latLng.lng();
@@ -194,6 +214,7 @@ function initMap() {
     }
   })
 }
+
 
 var updateWindow = function (map, marker, latlng) {
   mostRecentInfoWindow.close();
@@ -247,8 +268,8 @@ function newAddMarkerWithTimeout(position, timeout, battle) {
   var letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 
   var iconString = colors[Math.floor ( Math.random() * colors.length )] + '_Marker' + letters[Math.floor ( Math.random() * letters.length )] + '.png'
-  var randomIconPath = '/../front-end/public/images/google_maps_markers/' + iconString
-  var yoshiIconPath = '/../front-end/public/images/small_yoshis.png'
+  var randomIconPath = '../public/images/google_maps_markers/' + iconString
+  var yoshiIconPath = '../public/images/small_yoshis.png'
   var iconPath;
 
   if (battle.event_type == 'battle') {
@@ -260,6 +281,34 @@ function newAddMarkerWithTimeout(position, timeout, battle) {
   if (konami == false) {
     iconPath = randomIconPath
   }
+
+  iconPath = '../public/images/event-markers/event-marker-'
+
+  switch (battle.event_type) {
+    case "battle":
+    iconPath += '1.png';
+    break;
+    case "archaeological site":
+    iconPath += '6.png';
+    break;
+    case "explorer":
+    iconPath += '4.png';
+    break;
+    case "earthquake":
+    case "tornado":
+    case "volcano":
+    iconPath += '5.png';
+    break;
+    case "assassination":
+    iconPath += '2.png';
+    break;
+    case "siege":
+    iconPath += '3.png';
+    break;
+    default:
+    iconPath = randomIconPath;
+  }
+
 
   window.setTimeout(function() {
     var marker = new google.maps.Marker({
@@ -327,6 +376,19 @@ function clearMarkers() {
 $(document).ready(function() {
 
 
+  $('#polygon-mode').on('click', function(event) {
+    var value = $('#polygon-input').val()
+    if (value == ''){
+      $('#polygon-input').val('true')
+      bermudaTriangle.setMap(map);
+      $('#polygon-mode').addClass('red')
+    } else {
+      $('#polygon-input').val('')
+      bermudaTriangle.setMap(null);
+      $('#polygon-mode').removeClass('red')
+    }
+  })
+
   $('#wiki-header').hover(function() {
     $(this).addClass('magictime perspectiveUpRetourn')
     // setTimeout(function(){
@@ -338,19 +400,24 @@ $(document).ready(function() {
     $('#wiki-header').removeClass('magictime perspectiveUpRetourn')
   })
 
- //
   var easter_egg = new Konami();
   easter_egg.code = function() {
-    alert('Konami Code!');
-    konami = true;
+    konami ? alert('Konami Code Deactivated!') : alert('Konami Code Activated! YOSHI MODE ENGAGED')
+    konami ? konami = false : konami = true
   }
   easter_egg.load();
 
   $('#submit-button').on('click', function(event) {
+    var value = $('#polygon-input').val()
 
     event.preventDefault();
     var data = $('#input-data').serialize();
     console.log(data);
+    if (value == 'true') {
+      $('#polygon-input').val('')
+      bermudaTriangle.setMap(null);
+      $('#polygon-mode').removeClass('red')
+    }
     $.ajax({
       type: 'POST',
       url: 'http://localhost:3000/query',
@@ -361,26 +428,26 @@ $(document).ready(function() {
         console.log(response);
       } else {
         clearMarkers();
-        events_array = response.events
-        for (i = 0; i < events_array.length; i++) {
-          var event = events_array[i]
-          var coordinates = {lat: event.latitude, lng: event.longitude}
-          newAddMarkerWithTimeout(coordinates, i*(4000/events_array.length), event)
+        if (response.polygon == true) {
+          events_array = response.events
+          for (i = 0; i < events_array.length; i++) {
+            var event = events_array[i]
+            var coordinates = {lat: event.latitude, lng: event.longitude}
 
+            var g_coordinates = new google.maps.LatLng(event.latitude, event.longitude)
+            if (google.maps.geometry.poly.containsLocation(g_coordinates, bermudaTriangle) == true) {
+              newAddMarkerWithTimeout(coordinates, 200, event)
+            }
+          }
+        } else {
+          events_array = response.events
+          for (i = 0; i < events_array.length; i++) {
+            var event = events_array[i]
+            var coordinates = {lat: event.latitude, lng: event.longitude}
+            newAddMarkerWithTimeout(coordinates, i*(4000/events_array.length), event)
+
+          }
         }
-        // var qids = response[0].qids
-        // var type = response[0].type
-        // clearMarkers();
-        // for (i = 1; i < response.length; i++) {
-        //   var event = response[i][qids[i-1]];
-        //   var coordinates = {lat: event.latitude, lng: event.longitude};
-
-        //   if (type == 'battles') {
-        //     addMarkerWithTimeout(coordinates, i*400, event);
-        //   } else {
-        //     addArchaeologyMarkerWithTimeout(coordinates, i*400, event);
-        //   }
-        // }
       }
     })
   })
