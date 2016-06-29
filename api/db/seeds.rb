@@ -31,7 +31,7 @@ require 'httparty'
 # Query.delete_all
 # Event.delete_all
 # QueriesEvent.delete_all
-Event.where(event_type: 'assassination').destroy_all
+# Event.where(event_type: 'assassination').destroy_all
 
 dates = []
 def create_qIDS(id_array)
@@ -53,44 +53,32 @@ def parse_response(entities)
     parsed_response
   end
 
+
+  # # QUERY SEEDS FOR VOLCANOES
   mechanize = Mechanize.new
+  volcanoes_data_url = 'https://wdq.wmflabs.org/api?q=CLAIM[31:7692360]'
+  volcano_response = HTTParty.get(volcanoes_data_url)
+  volcano_qIDS = create_qIDS(volcano_response['items'])
 
-  murders_data_url = 'https://wdq.wmflabs.org/api?q=CLAIM[31:132821]'
-  murder_response = HTTParty.get(murders_data_url)
-  murder_qIDS = create_qIDS(murder_response['items'])
-
-  murder_qIDS.each_slice(50) do |qid_array|
+  volcano_qIDS.each_slice(50) do |qid_array|
     qIDString = qid_array.join("%7C")
-    murder_media_url = "https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=#{qIDString}&props=labels%7Cdescriptions%7Cclaims%7Csitelinks%2Furls&languages=en&languag
+    volcano_media_url = "https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=#{qIDString}&props=labels%7Cdescriptions%7Cclaims%7Csitelinks%2Furls&languages=en&languag
     efallback=1&sitefilter=&formatversion=2"
-    media_response = HTTParty.get(murder_media_url)
+    media_response = HTTParty.get(volcano_media_url)
     entities = media_response['entities']
     p parsed_response = parse_response(entities)
     parsed_response.each do |entity_hash|
       entity_hash.each do |qID, value|
-        @event = Event.new(qID: qID, title: value[:title], end_time: value[:end_time], latitude: value[:latitude], longitude: value[:longitude], event_url: value[:link], point_in_time: value[:point_in_time], event_type: 'assassination' )
-        murder_url = value[:link]
+        @event = Event.new(qID: qID, title: value[:title], end_time: value[:end_time], latitude: value[:latitude], longitude: value[:longitude], event_url: value[:link], point_in_time: value[:point_in_time], event_type: 'volcano' )
+        volcano_url = value[:link]
         begin
-          page = mechanize.get(murder_url)
+          page = mechanize.get(volcano_url)
           description = ''
-          location = ''
           if page.at('#mw-content-text')
             if page.at('#mw-content-text').xpath('./p')
               if page.at('#mw-content-text').xpath('./p').first
                 description = page.at('#mw-content-text').xpath('./p').first.text
               end
-            end
-          end
-
-          if page.at('#mw-content-text p a')
-            location = page.at('#mw-content-text p a').text.strip
-          end
-
-          if location != ''
-            location_lat_lng = Geocoder.coordinates('location')
-            if @event.latitude.nil?
-              @event.latitude = location_lat_lng[0]
-              @event.longitude = location_lat_lng[1]
             end
           end
           @event.description = description
@@ -101,6 +89,90 @@ def parse_response(entities)
       end
     end
   end
+
+
+  # # QUERY SEEDS FOR EARTHQUAKES
+  # earthquakes_data_url = 'https://wdq.wmflabs.org/api?q=CLAIM[31:7944]'
+  # earthquake_response = HTTParty.get(earthquakes_data_url)
+  # earthquake_qIDS = create_qIDS(earthquake_response['items'])
+
+  # earthquake_qIDS.each_slice(50) do |qid_array|
+  #   qIDString = qid_array.join("%7C")
+  #   earthquake_media_url = "https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=#{qIDString}&props=labels%7Cdescriptions%7Cclaims%7Csitelinks%2Furls&languages=en&languag
+  #   efallback=1&sitefilter=&formatversion=2"
+  #   media_response = HTTParty.get(earthquake_media_url)
+  #   entities = media_response['entities']
+  #   p parsed_response = parse_response(entities)
+  #   parsed_response.each do |entity_hash|
+  #     entity_hash.each do |qID, value|
+  #       @event = Event.new(qID: qID, title: value[:title], end_time: value[:end_time], latitude: value[:latitude], longitude: value[:longitude], event_url: value[:link], point_in_time: value[:point_in_time], event_type: 'earthquake' )
+  #       earthquake_url = value[:link]
+  #       begin
+  #         page = mechanize.get(earthquake_url)
+  #         description = ''
+  #         if page.at('#mw-content-text')
+  #           if page.at('#mw-content-text').xpath('./p')
+  #             if page.at('#mw-content-text').xpath('./p').first
+  #               description = page.at('#mw-content-text').xpath('./p').first.text
+  #             end
+  #           end
+  #         end
+  #         @event.description = description
+  #         @event.save
+  #       rescue Mechanize::ResponseCodeError
+  #         break
+  #       end
+  #     end
+  #   end
+  # end
+
+  # # QUERY SEEDS FOR MURDERS/ASSASSINATIONS
+  # murders_data_url = 'https://wdq.wmflabs.org/api?q=CLAIM[31:132821]'
+  # murder_response = HTTParty.get(murders_data_url)
+  # murder_qIDS = create_qIDS(murder_response['items'])
+
+  # murder_qIDS.each_slice(50) do |qid_array|
+  #   qIDString = qid_array.join("%7C")
+  #   murder_media_url = "https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=#{qIDString}&props=labels%7Cdescriptions%7Cclaims%7Csitelinks%2Furls&languages=en&languag
+  #   efallback=1&sitefilter=&formatversion=2"
+  #   media_response = HTTParty.get(murder_media_url)
+  #   entities = media_response['entities']
+  #   p parsed_response = parse_response(entities)
+  #   parsed_response.each do |entity_hash|
+  #     entity_hash.each do |qID, value|
+  #       @event = Event.new(qID: qID, title: value[:title], end_time: value[:end_time], latitude: value[:latitude], longitude: value[:longitude], event_url: value[:link], point_in_time: value[:point_in_time], event_type: 'assassination' )
+  #       murder_url = value[:link]
+  #       begin
+  #         page = mechanize.get(murder_url)
+  #         description = ''
+  #         location = ''
+  #         if page.at('#mw-content-text')
+  #           if page.at('#mw-content-text').xpath('./p')
+  #             if page.at('#mw-content-text').xpath('./p').first
+  #               description = page.at('#mw-content-text').xpath('./p').first.text
+  #             end
+  #           end
+  #         end
+
+  #         if page.at('#mw-content-text p a')
+  #           location = page.at('#mw-content-text p a').text.strip
+  #         end
+
+  #         if location != ''
+  #           location_lat_lng = Geocoder.coordinates('location')
+  #           if @event.latitude.nil?
+  #             @event.latitude = location_lat_lng[0]
+  #             @event.longitude = location_lat_lng[1]
+  #           end
+  #         end
+  #         @event.description = description
+  #         @event.save
+  #       rescue Mechanize::ResponseCodeError
+  #         break
+  #       end
+  #     end
+  #   end
+  # end
 
 
 # # QUERY SEEDS FOR SIEGES

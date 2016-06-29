@@ -1,6 +1,6 @@
 class QueryController < ApplicationController
 
-    CATEGORIES_HASH = { 'battles' => 178561, 'archaeological_sites' => 839954, 'sieges' => 188055, 'murders' => 132821 }
+    CATEGORIES_HASH = { 'battles' => 178561, 'archaeological_sites' => 839954, 'sieges' => 188055, 'murders' => 132821, 'earthquakes' => 7944, 'volcanoes' => 7692360, 'tornadoes' => 8081 }
     LATITUDE_CONVERTER = 110.574
     LONGITUDE_CONVERTER = 111.320
     def create
@@ -33,6 +33,8 @@ class QueryController < ApplicationController
             @events = Event.where(latitude: lower_lat..upper_lat).where(longitude: lower_lng..upper_lng).where(event_type: 'archaeological site')
         elsif type == 'assassinations'
             @events = Event.where(latitude: lower_lat..upper_lat).where(longitude: lower_lng..upper_lng).where(event_type: 'assassination')
+        elsif type == 'natural_disasters'
+            @events = Event.where(point_in_time: DateTime.new(start_year)..DateTime.new(end_year)).where(latitude: lower_lat..upper_lat).where(longitude: lower_lng..upper_lng).where(event_type: ['earthquake', 'volcano', 'tornado'])
         else
             @events = Event.where(latitude: lower_lat..upper_lat).where(longitude: lower_lng..upper_lng)
         end
