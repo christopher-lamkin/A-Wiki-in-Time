@@ -6,6 +6,13 @@ var myLatLng = {lat: 32.866756, lng: -83.469486};
 var mostRecentInfoWindow;
 var bermudaTriangle;
 var markers = [];
+
+var quadCoords = [
+{lat: 25.774, lng: -80.190},
+{lat: 18.466, lng: -66.118},
+{lat: 32.321, lng: -64.757},
+{lat: 25.774, lng: -80.190}
+]
 var styleArray = [
 {
   "featureType": "administrative",
@@ -177,13 +184,6 @@ function initMap() {
 
   $('#lat-input').val(myLatLng.lat);
   $('#long-input').val(myLatLng.lng);
-
-  var quadCoords = [
-  {lat: 25.774, lng: -80.190},
-  {lat: 18.466, lng: -66.118},
-  {lat: 32.321, lng: -64.757},
-  {lat: 25.774, lng: -80.190}
-  ]
   bermudaTriangle = new google.maps.Polygon({
     paths: quadCoords,
     strokeColor: '#FF0000',
@@ -375,8 +375,21 @@ function clearMarkers() {
 $(document).ready(function() {
 
   $('#reset-button').on('click', function(event) {
-
+    bermudaTriangle.setMap(null);
+    $('#polygon-mode').removeClass('red')
+    $('#polygon-input').val('')
     clearMarkers();
+    bermudaTriangle = new google.maps.Polygon({
+      paths: quadCoords,
+      strokeColor: '#FF0000',
+      strokeOpacity: 0.8,
+      strokeWeight: 2,
+      fillColor: '#FF0000',
+      fillOpacity: 0.35,
+      draggable: true,
+      geodesic: true,
+      editable: true
+    });
 
   })
   $('#polygon-mode').on('click', function(event) {
@@ -398,7 +411,7 @@ $(document).ready(function() {
   $('#wiki-header').mouseleave(function() {
     window.setTimeout(function() {
 
-    $(this).removeClass('magictime perspectiveUpRetourn')
+      $(this).removeClass('magictime perspectiveUpRetourn')
 
     }, 4000)
   });
