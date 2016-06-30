@@ -166,16 +166,15 @@ function initMap() {
 
 
 
-  var image_path = '../public/images/google_maps_markers/blue_MarkerA.png'
+  var image_path = '../public/images/event-markers/event-marker-2.png'
   marker = new google.maps.Marker({
     // position: map.getCenter(),
     position: myLatLng,
     map: map,
     draggable: true,
     icon: image_path
-
-
   });
+
   $('#lat-input').val(myLatLng.lat);
   $('#long-input').val(myLatLng.lng);
 
@@ -375,7 +374,11 @@ function clearMarkers() {
 
 $(document).ready(function() {
 
+  $('#reset-button').on('click', function(event) {
 
+    clearMarkers();
+
+  })
   $('#polygon-mode').on('click', function(event) {
     var value = $('#polygon-input').val()
     if (value == ''){
@@ -389,11 +392,15 @@ $(document).ready(function() {
     }
   })
 
-  $('#wiki-header').hover(function() {
+  $('#wiki-header').mouseenter(function() {
     $(this).addClass('magictime perspectiveUpRetourn')
-    // setTimeout(function(){
-    //   $(this).removeClass('magictime perspectiveUpRetourn');
-    // }, 3000)
+  });
+  $('#wiki-header').mouseleave(function() {
+    window.setTimeout(function() {
+
+    $(this).removeClass('magictime perspectiveUpRetourn')
+
+    }, 4000)
   });
 
   $('#map-container').hover(function() {
